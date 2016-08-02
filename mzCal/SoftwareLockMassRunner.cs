@@ -60,6 +60,8 @@ namespace mzCal
 
             p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
 
+            Calibrate(pointList, p);
+
             if (p.deconvolute)
             {
                 p.OnOutput(new OutputHandlerEventArgs("Deconvolution"));
