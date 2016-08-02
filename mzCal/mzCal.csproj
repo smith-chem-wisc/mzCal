@@ -81,7 +81,6 @@
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\LinearCalibrationFunctionMathNet.cs" />
     <Compile Include="CalibrationFunctions\TrainingPoint.cs" />
-    <Compile Include="Calibrators.cs" />
     <Compile Include="CalibrationFunctions\SeparateCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\QuadraticCalibrationFunctionMathNet.cs" />
     <Compile Include="CalibrationFunctions\OppositeCalibrationFunction.cs" />

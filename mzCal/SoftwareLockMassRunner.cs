@@ -78,12 +78,6 @@ namespace mzCal
 
             p.postProcessing(p);
 
-            if (p.tsvFile != null)
-            {
-                p.OnOutput(new OutputHandlerEventArgs("Calibrating TSV file"));
-                Calibrators.CalibrateTSV(cfForTSVcalibration, p);
-            }
-
             p.OnOutput(new OutputHandlerEventArgs("Finished running my software lock mass implementation"));
             p.OnProgress(new ProgressHandlerEventArgs(0));
         }

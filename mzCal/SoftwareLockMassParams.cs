@@ -33,7 +33,6 @@ namespace mzCal
 
         public delegate string GetFormulaFromDictionary(string dictionary, string acession);
         public GetFormulaFromDictionary getFormulaFromDictionary;
-        public string tsvFile = null;
         public bool calibrateSpectra = true;
         internal int randomSeed;
         internal bool deconvolute;
