@@ -83,7 +83,6 @@
     <Compile Include="CalibrationFunctions\TrainingPoint.cs" />
     <Compile Include="CalibrationFunctions\SeparateCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\QuadraticCalibrationFunctionMathNet.cs" />
-    <Compile Include="CalibrationFunctions\OppositeCalibrationFunction.cs" />
     <Compile Include="TrainingPointsExtractor.cs" />
     <Compile Include="SoftwareLockMassParams.cs" />
     <Compile Include="SoftwareLockMassRunner.cs" />
