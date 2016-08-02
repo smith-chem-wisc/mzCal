@@ -1,0 +1,18 @@
+language: csharp
+solution: mzCal.sln
+install:
+- nuget restore mzCal.sln
+- nuget install NUnit.Console -OutputDirectory testrunner
+script:
+- xbuild /p:Configuration=TestAndRelease mzCal.sln
+- mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
+- tar -zcvf MonoCommandLine.tar.gz -C mzCal/bin/Release .
+- mono ./mzCalCommandLine/bin/Release/mzCal.exe Test/myFakeFile.mzML Test/myIdentifications.mzid
+deploy:
+  provider: releases
+  file: MonoCommandLine.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
+  api_key:
+    secure: kIDdcC1qpS+9598jwL+h3CRTsTnMDIfd52MC/6V/XfRg8wnUgkYvKi8LKh2lmO3bm80HYdYbocMQmydum7B64/0YloHb4p+wyKpHZhiIOpzKfy56zZVKr3J8DZtjb/X5x+o3xfXVopewg2q7Ae4tfGl1Jswgepx7mMu2ICQ3H11mgytQRmpy06MEUi+zfAiw/hnGKHlTNb8r8/D0bft7QybT3PdPidB0EpHqwl9zcHguSAeKv+Eg/sPj2nUIYmBlJ6n1ACK/S/uMnJKW52InIaGjY8NF/LA00OYyZtgWL8GGCXh7YYWPpSuO70mSAoJfA2kTHT6s+OWmcGmGqEicmsivefN7GvIHvFoSHNlv9QWnMz9y4khQ+8CChwaUwyKWPlnW4dbAFCezxYmnsH/qyCAFW7itRoVVlJ+iyDmcRdaB4TIHyEBL2q8Qa6ICm9BVnMx5pR2JKaA1rbBjLtmAXfFuFvr8p/ezhrunV81fg3/md3CJUUL4KztS05Oky1c1G7QDY7IZGAVvo8xNbOgNXdPN2j41sF154NObWqx27n6774Fjquo+2iWGDV0gKQtEXgWEeVR0q23QhIXWzVkc2CkP1wfM10IogIYZBAJ9unf69zZl9ddmybcoSk8sSz7ayUocCbsU0guN0lYCGaw7j45FwjVme7CAxCTYhKv3JF0=

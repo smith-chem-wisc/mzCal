@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MzIdentML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1.1">
+  <SequenceCollection>
+    <Peptide>
+      <PeptideSequence>GPEAPPPALPAGAPPPCTAVTSDHLNSLLGNILR</PeptideSequence>
+      <Modification location="17" monoisotopicMassDelta="57.02146373">
+        <cvParam name="Carbamidomethyl" cvRef="UNIMOD" accession="UNIMOD:4" />
+      </Modification>
+    </Peptide>
+    <PeptideEvidence />
+  </SequenceCollection>
+  <DataCollection>
+    <AnalysisData>
+      <SpectrumIdentificationList>
+        <SpectrumIdentificationResult spectrumID="spectrum 2">
+          <SpectrumIdentificationItem chargeState="3" experimentalMassToCharge="1134.2620482812131" calculatedMassToCharge="1134.26091302033" rank="0" passThreshold="false">
+            <cvParam value="100" />
+          </SpectrumIdentificationItem>
+        </SpectrumIdentificationResult>
+      </SpectrumIdentificationList>
+    </AnalysisData>
+  </DataCollection>
+</MzIdentML>
