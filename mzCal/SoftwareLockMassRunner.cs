@@ -60,8 +60,6 @@ namespace mzCal
 
             p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
 
-            CalibrationFunction cfForTSVcalibration = Calibrate(pointList, p);
-
             if (p.deconvolute)
             {
                 p.OnOutput(new OutputHandlerEventArgs("Deconvolution"));
