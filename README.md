@@ -1,11 +1,7 @@
 
 # mzCal 
-
-Platform | Status |
---- | --- |
-| Windows  | [![Build status](https://ci.appveyor.com/api/projects/status/6h8lvw0sqpf0g604/branch/master?svg=true)](https://ci.appveyor.com/project/stefanks/mzcal/branch/master)  |
-| Linux/OS X | [![Build Status](https://travis-ci.org/smith-chem-wisc/mzCal.svg?branch=master)](https://travis-ci.org/smith-chem-wisc/mzCal)  |
-
+ [![Build status](https://ci.appveyor.com/api/projects/status/6h8lvw0sqpf0g604/branch/master?svg=true)](https://ci.appveyor.com/project/stefanks/mzcal/branch/master)
+ [![Build Status](https://travis-ci.org/smith-chem-wisc/mzCal.svg?branch=master)](https://travis-ci.org/smith-chem-wisc/mzCal)
  [![Coverage Status](https://coveralls.io/repos/github/smith-chem-wisc/mzCal/badge.svg?branch=master)](https://coveralls.io/github/smith-chem-wisc/mzCal?branch=master)
  [![Coverity Scan Build Status](https://scan.coverity.com/projects/9741/badge.svg)](https://scan.coverity.com/projects/mzcal) 
 
