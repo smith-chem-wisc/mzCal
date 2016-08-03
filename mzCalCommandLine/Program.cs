@@ -8,7 +8,7 @@ namespace mzCalCommandLine
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Version" + Assembly.GetExecutingAssembly().GetName().Version);
+            Console.WriteLine("Version " + Assembly.GetExecutingAssembly().GetName().Version);
 
             string origDataFile = args[0];
             string mzidFile = args[1];
