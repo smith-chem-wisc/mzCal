@@ -6,7 +6,7 @@ install:
 script:
 - xbuild /p:Configuration=TestAndRelease mzCal.sln
 - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
-- tar -zcvf MonoCommandLine.tar.gz -C mzCal/bin/Release .
+- tar -zcvf MonoCommandLine.tar.gz -C mzCalCommandLine/bin/Release .
 - mono ./mzCalCommandLine/bin/Release/mzCal.exe Test/myFakeFile.mzML Test/myIdentifications.mzid
 deploy:
   provider: releases
