@@ -4,7 +4,7 @@ install:
 - nuget restore mzCal.sln
 - nuget install NUnit.Console -OutputDirectory testrunner
 script:
-- if [ -z "${TRAVIS_TAG}" ]; then export TRAVIS_TAG=1.0.0.0 fi
+- if [ -z "${TRAVIS_TAG}" ]; then export TRAVIS_TAG=1.0.0.0; fi
 - sed -i -- 's/1.0.0.0/'$TRAVIS_TAG'/g' mzCalCommandLine/Properties/AssemblyInfo.cs
 - xbuild /p:Configuration=TestAndRelease mzCal.sln
 - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
