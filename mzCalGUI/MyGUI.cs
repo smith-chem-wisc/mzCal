@@ -25,15 +25,16 @@ namespace mzCalGUI
 
         private void buttonAddFiles_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
+            {
+                openFileDialog1.Filter = "Mass Spec Files(*.raw;*.mzML;*.mzid;*PSMs.tsv)|*.raw;*.mzML;*.mzid;*PSMs.tsv|All files (*.*)|*.*";
+                openFileDialog1.FilterIndex = 1;
+                openFileDialog1.RestoreDirectory = true;
+                openFileDialog1.Multiselect = true;
 
-            openFileDialog1.Filter = "Mass Spec Files(*.raw;*.mzML;*.mzid;*PSMs.tsv)|*.raw;*.mzML;*.mzid;*PSMs.tsv|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = true;
-            openFileDialog1.Multiselect = true;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                addFilePaths(openFileDialog1.FileNames);
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                    addFilePaths(openFileDialog1.FileNames);
+            }
         }
 
         private void buttonCalibrate_Click(object sender, EventArgs e)
