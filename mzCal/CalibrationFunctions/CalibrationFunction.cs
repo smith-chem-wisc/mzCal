@@ -16,7 +16,7 @@ namespace mzCal
                 mse += Math.Pow(Predict(p.inputs) - p.output, 2);
                 count++;
             }
-            return mse / count;
+            return count == 0 ? 0 : mse / count;
         }
 
         internal void writeNewLabels(List<LabeledDataPoint> trainList1, string v)
