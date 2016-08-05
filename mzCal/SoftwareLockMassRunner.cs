@@ -133,6 +133,7 @@ namespace mzCal
                 bestMS2predictor = ms2regressor;
             }
 
+
             List<bool[]> featuresArray = new List<bool[]>();
             featuresArray.Add(new bool[6] { false, true, false, false, false, false });
             featuresArray.Add(new bool[6] { false, false, true, false, false, false });
@@ -288,6 +289,14 @@ namespace mzCal
             {
                 if (a.MsnOrder == 2)
                 {
+                    if (p.MS2spectraToWatch.Contains(a.ScanNumber))
+                    {
+                        p.OnWatch(new OutputHandlerEventArgs("Calibrating scan number " + a.ScanNumber));
+                        p.OnWatch(new OutputHandlerEventArgs(" before calibration:"));
+                        p.OnWatch(new OutputHandlerEventArgs(" " + string.Join(",", a.MassSpectrum.newSpectrumExtract(p.mzRange).xArray)));
+                    }
+
+
                     int precursorScanNumber;
                     a.TryGetPrecursorScanNumber(out precursorScanNumber);
                     var precursorScan = p.myMsDataFile.GetScan(precursorScanNumber);
@@ -314,11 +323,33 @@ namespace mzCal
 
                     Func<MzPeak, double> theFunc = x => x.MZ - bestCf.Predict(new double[9] { 2, x.MZ, a.RetentionTime, x.Intensity, a.TotalIonCurrent, a.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, (x.MZ - a.ScanWindowRange.Minimum) / (a.ScanWindowRange.Maximum - a.ScanWindowRange.Minimum) });
                     a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFunc, newSelectedMZ, newMonoisotopicMZ);
+
+                    if (p.MS2spectraToWatch.Contains(a.ScanNumber))
+                    {
+                        p.OnWatch(new OutputHandlerEventArgs(" after calibration:"));
+                        p.OnWatch(new OutputHandlerEventArgs(" precursorMZ:" + precursorMZ));
+                        p.OnWatch(new OutputHandlerEventArgs(" monoisotopicMZ:" + monoisotopicMZ));
+                        p.OnWatch(new OutputHandlerEventArgs(" newSelectedMZ:" + newSelectedMZ));
+                        p.OnWatch(new OutputHandlerEventArgs(" newMonoisotopicMZ:" + newMonoisotopicMZ));
+                        p.OnWatch(new OutputHandlerEventArgs(" " + string.Join(",", a.MassSpectrum.newSpectrumExtract(p.mzRange).xArray)));
+                    }
+
+
                 }
                 else
                 {
+                    if (p.MS1spectraToWatch.Contains(a.ScanNumber))
+                    {
+                        p.OnWatch(new OutputHandlerEventArgs("Calibrating scan number " + a.ScanNumber));
+                        p.OnWatch(new OutputHandlerEventArgs(" before calibration:"));
+                        p.OnWatch(new OutputHandlerEventArgs(" " + string.Join(",", a.MassSpectrum.newSpectrumExtract(p.mzRange).xArray)));
+                    }
                     Func<MzPeak, double> theFUnc = x => x.MZ - bestCf.Predict(new double[6] { 1, x.MZ, a.RetentionTime, x.Intensity, a.TotalIonCurrent, a.InjectionTime });
-                    a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFUnc, double.NaN, double.NaN);
+                    a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFUnc, double.NaN, double.NaN); if (p.MS1spectraToWatch.Contains(a.ScanNumber))
+                    {
+                        p.OnWatch(new OutputHandlerEventArgs(" after calibration:"));
+                        p.OnWatch(new OutputHandlerEventArgs(string.Join(",", a.MassSpectrum.newSpectrumExtract(p.mzRange).xArray)));
+                    }
                 }
             }
         }
