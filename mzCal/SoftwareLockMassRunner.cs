@@ -354,7 +354,7 @@ namespace mzCal
             }
         }
 
-        private static void WriteDataToFiles(IEnumerable<LabeledDataPoint> trainingPoints, string prefix)
+        public static void WriteDataToFiles(IEnumerable<LabeledDataPoint> trainingPoints, string prefix)
         {
             var fullFileName = Path.Combine(@"DataPoints", prefix + ".dat");
             Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));

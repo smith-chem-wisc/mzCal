@@ -43,16 +43,9 @@ namespace mzCalIO
             a.postProcessing = MzmlOutput;
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = new MzidIdentifications(mzidFile);
-            //a.MS2spectraToWatch.Add(4433);
-            //a.MS2spectraToWatch.Add(4400);
-            //a.MS2spectraToWatch.Add(8027);
-            //a.MS2spectraToWatch.Add(8493);
-            //a.MS2spectraToWatch.Add(8205);
-            //a.MS2spectraToWatch.Add(13754);
-            a.MS2spectraToWatch.Add(5397);
-            a.MS1spectraToWatch.Add(5396);
 
-            a.mzRange = new DoubleRange(502, 505);
+            //a.MS2spectraToWatch.Add(11502);
+            //a.mzRange = new DoubleRange(0, 0);
             return a;
         }
 
