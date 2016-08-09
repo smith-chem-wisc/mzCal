@@ -135,27 +135,27 @@ namespace mzCal
             }
 
 
-            ms1regressor = new ByHandCalibrationFunction(p.OnOutput, trainList1);
-            ms2regressor = new ByHandCalibrationFunction(p.OnOutput, trainList2);
-            combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-            combinedCalibration.writeNewLabels(trainList1, "trainList1byHand" + p.myMsDataFile.Name);
-            combinedCalibration.writeNewLabels(trainList2, "trainList2byHand" + p.myMsDataFile.Name);
-            combinedCalibration.writeNewLabels(testList1, "testList1byHand" + p.myMsDataFile.Name);
-            combinedCalibration.writeNewLabels(testList2, "testList2byHand" + p.myMsDataFile.Name);
-            MS1mse = ms1regressor.getMSE(testList1);
-            MS2mse = ms2regressor.getMSE(testList2);
-            combinedMSE = combinedCalibration.getMSE(testList);
-            p.OnOutput(new OutputHandlerEventArgs("By hand calibration MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-            if (MS1mse < bestMS1MSE)
-            {
-                bestMS1MSE = MS1mse;
-                bestMS1predictor = ms1regressor;
-            }
-            if (MS2mse < bestMS2MSE)
-            {
-                bestMS2MSE = MS2mse;
-                bestMS2predictor = ms2regressor;
-            }
+            //ms1regressor = new ByHandCalibrationFunction(p.OnOutput, trainList1);
+            //ms2regressor = new ByHandCalibrationFunction(p.OnOutput, trainList2);
+            //combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+            //combinedCalibration.writeNewLabels(trainList1, "trainList1byHand" + p.myMsDataFile.Name);
+            //combinedCalibration.writeNewLabels(trainList2, "trainList2byHand" + p.myMsDataFile.Name);
+            //combinedCalibration.writeNewLabels(testList1, "testList1byHand" + p.myMsDataFile.Name);
+            //combinedCalibration.writeNewLabels(testList2, "testList2byHand" + p.myMsDataFile.Name);
+            //MS1mse = ms1regressor.getMSE(testList1);
+            //MS2mse = ms2regressor.getMSE(testList2);
+            //combinedMSE = combinedCalibration.getMSE(testList);
+            //p.OnOutput(new OutputHandlerEventArgs("By hand calibration MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
+            //if (MS1mse < bestMS1MSE)
+            //{
+            //    bestMS1MSE = MS1mse;
+            //    bestMS1predictor = ms1regressor;
+            //}
+            //if (MS2mse < bestMS2MSE)
+            //{
+            //    bestMS2MSE = MS2mse;
+            //    bestMS2predictor = ms2regressor;
+            //}
 
 
 
@@ -234,61 +234,61 @@ namespace mzCal
 
             try
             {
-                foreach (var logVars in logArray)
-                {
-                    foreach (var ok in featuresArray)
-                    {
-                        ms1regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                        ms2regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                        combinedCalibration.writeNewLabels(trainList1, "trainList1Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(trainList2, "trainList2Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList1, "testList1Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList2, "testList2Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        MS1mse = ms1regressor.getMSE(testList1);
-                        MS2mse = ms2regressor.getMSE(testList2);
-                        combinedMSE = combinedCalibration.getMSE(testList);
-                        p.OnOutput(new OutputHandlerEventArgs("Linear calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                        if (MS1mse < bestMS1MSE)
-                        {
-                            bestMS1MSE = MS1mse;
-                            bestMS1predictor = ms1regressor;
-                        }
-                        if (MS2mse < bestMS2MSE)
-                        {
-                            bestMS2MSE = MS2mse;
-                            bestMS2predictor = ms2regressor;
-                        }
-                    }
-                }
+                //    foreach (var logVars in logArray)
+                //    {
+                //        foreach (var ok in featuresArray)
+                //        {
+                //            ms1regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
+                //            ms2regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
+                //            combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+                //            combinedCalibration.writeNewLabels(trainList1, "trainList1Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            combinedCalibration.writeNewLabels(trainList2, "trainList2Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            combinedCalibration.writeNewLabels(testList1, "testList1Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            combinedCalibration.writeNewLabels(testList2, "testList2Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            MS1mse = ms1regressor.getMSE(testList1);
+                //            MS2mse = ms2regressor.getMSE(testList2);
+                //            combinedMSE = combinedCalibration.getMSE(testList);
+                //            p.OnOutput(new OutputHandlerEventArgs("Linear calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
+                //            if (MS1mse < bestMS1MSE)
+                //            {
+                //                bestMS1MSE = MS1mse;
+                //                bestMS1predictor = ms1regressor;
+                //            }
+                //            if (MS2mse < bestMS2MSE)
+                //            {
+                //                bestMS2MSE = MS2mse;
+                //                bestMS2predictor = ms2regressor;
+                //            }
+                //        }
+                //    }
 
-                foreach (var logVars in logArray)
-                {
-                    foreach (var ok in featuresArray)
-                    {
-                        ms1regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                        ms2regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                        combinedCalibration.writeNewLabels(trainList1, "trainList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(trainList2, "trainList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList1, "testList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList2, "testList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        MS1mse = ms1regressor.getMSE(testList1);
-                        MS2mse = ms2regressor.getMSE(testList2);
-                        combinedMSE = combinedCalibration.getMSE(testList);
-                        p.OnOutput(new OutputHandlerEventArgs("Quadratic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                        if (MS1mse < bestMS1MSE)
-                        {
-                            bestMS1MSE = MS1mse;
-                            bestMS1predictor = ms1regressor;
-                        }
-                        if (MS2mse < bestMS2MSE)
-                        {
-                            bestMS2MSE = MS2mse;
-                            bestMS2predictor = ms2regressor;
-                        }
-                    }
-                }
+                //    foreach (var logVars in logArray)
+                //    {
+                //        foreach (var ok in featuresArray)
+                //        {
+                //            ms1regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
+                //            ms2regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
+                //            combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+                //            combinedCalibration.writeNewLabels(trainList1, "trainList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            combinedCalibration.writeNewLabels(trainList2, "trainList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            combinedCalibration.writeNewLabels(testList1, "testList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            combinedCalibration.writeNewLabels(testList2, "testList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                //            MS1mse = ms1regressor.getMSE(testList1);
+                //            MS2mse = ms2regressor.getMSE(testList2);
+                //            combinedMSE = combinedCalibration.getMSE(testList);
+                //            p.OnOutput(new OutputHandlerEventArgs("Quadratic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
+                //            if (MS1mse < bestMS1MSE)
+                //            {
+                //                bestMS1MSE = MS1mse;
+                //                bestMS1predictor = ms1regressor;
+                //            }
+                //            if (MS2mse < bestMS2MSE)
+                //            {
+                //                bestMS2MSE = MS2mse;
+                //                bestMS2predictor = ms2regressor;
+                //            }
+                //        }
+                //    }
 
                 //foreach (var logVars in logArray)
                 //{
