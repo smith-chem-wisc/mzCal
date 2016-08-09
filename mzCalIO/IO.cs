@@ -44,8 +44,56 @@ namespace mzCalIO
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = new MzidIdentifications(mzidFile);
 
+            //a.MS2spectraToWatch.Add(13208);
+            //a.MS2spectraToWatch.Add(15143
+            //a.MS2spectraToWatch.Add(14296);
+            //a.MS2spectraToWatch.Add(7228);
+            //a.MS2spectraToWatch.Add(15221);
+            //a.MS2spectraToWatch.Add(8192);
+
+            //a.MS1spectraToWatch.Add(17639);
+            //a.MS2spectraToWatch.Add(17706);
+
+
+
+            a.MS2spectraToWatch.Add(5998);
+            //a.MS2spectraToWatch.Add(5987);
+            //a.MS2spectraToWatch.Add(15727);
+            //a.MS2spectraToWatch.Add(15511);
+            //a.MS2spectraToWatch.Add(4869);
+            //a.MS2spectraToWatch.Add(8491);
             //a.MS2spectraToWatch.Add(11502);
-            //a.mzRange = new DoubleRange(0, 0);
+            //a.MS2spectraToWatch.Add(14795);
+            //a.MS2spectraToWatch.Add(8928);
+            //a.MS2spectraToWatch.Add(15737);
+            //a.MS2spectraToWatch.Add(15187);
+            //a.MS2spectraToWatch.Add(18092);
+            //a.MS2spectraToWatch.Add(5326);
+            //a.MS2spectraToWatch.Add(4648);
+            //a.MS2spectraToWatch.Add(4636);
+            //a.MS2spectraToWatch.Add(13465);
+            //a.MS2spectraToWatch.Add(13449);
+            //a.MS2spectraToWatch.Add(13353);
+            //a.MS2spectraToWatch.Add(13343);
+            //a.MS2spectraToWatch.Add(10457);
+            //a.MS2spectraToWatch.Add(11823);
+            //a.MS2spectraToWatch.Add(16893);
+            //a.MS2spectraToWatch.Add(17454);
+            //a.MS2spectraToWatch.Add(17486);
+            //a.MS2spectraToWatch.Add(17258);
+            //a.MS2spectraToWatch.Add(11791);
+            //a.MS2spectraToWatch.Add(15694);
+            //a.MS2spectraToWatch.Add(11018);
+            //a.MS2spectraToWatch.Add(6682);
+            //a.MS2spectraToWatch.Add(14091);
+            //a.MS2spectraToWatch.Add(7676);
+            //a.MS2spectraToWatch.Add(14736);
+            //a.MS2spectraToWatch.Add(17784);
+            //a.MS2spectraToWatch.Add(11010);
+
+
+
+            a.mzRange = new DoubleRange(0, 0);
             return a;
         }
 

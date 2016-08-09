@@ -42,8 +42,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Chemistry.1.0.113\lib\net451\Chemistry.dll</HintPath>
     </Reference>
-    <Reference Include="MassSpectrometry, Version=1.0.109.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.109\lib\net451\MassSpectrometry.dll</HintPath>
+    <Reference Include="MassSpectrometry, Version=1.0.110.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.110\lib\net451\MassSpectrometry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=3.12.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -55,7 +55,7 @@
       <HintPath>..\packages\Proteomics.1.0.35\lib\net451\Proteomics.dll</HintPath>
     </Reference>
     <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.109\lib\net451\Spectra.dll</HintPath>
+      <HintPath>..\packages\MassSpectrometry.1.0.110\lib\net451\Spectra.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -73,9 +73,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ByHandCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\ConstantScanWiseCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\ConstantCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\DataPoint.cs" />
+    <Compile Include="CalibrationFunctions\MyBinaryTree.cs" />
     <Compile Include="CalibrationFunctions\NiceTrainingPoint.cs" />
     <Compile Include="CalibrationFunctions\CubicCalibrationFunctionMathNet.cs" />
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
