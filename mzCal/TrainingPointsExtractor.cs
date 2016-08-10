@@ -78,9 +78,9 @@ namespace mzCal
                 }
                 Array.Sort(intensities, masses, Comparer<double>.Create((x, y) => y.CompareTo(x)));
 
-                List<int> myMS1downScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedFromMS1HashSet, p, peptideCharge);
+                SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedFromMS1HashSet, p, peptideCharge);
 
-                List<int> myMS1upScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedFromMS1HashSet, p, peptideCharge);
+                SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedFromMS1HashSet, p, peptideCharge);
 
                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                 {
