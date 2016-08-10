@@ -19,16 +19,6 @@ namespace Test
 
         }
 
-        [Test]
-        public void TestSoftwareLockMassRunner()
-        {
-            mzCalIO.mzCalIO.Load();
-
-            SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(@"myFakeFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid", true);
-
-            SoftwareLockMassRunner.Run(a);
-        }
-
         event EventHandler<OutputHandlerEventArgs> outputHandler;
 
         public void OnOutput(OutputHandlerEventArgs e)
