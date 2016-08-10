@@ -15,48 +15,7 @@ namespace mzCal
 
             p.OnOutput(new OutputHandlerEventArgs("Opening file:"));
             p.myMsDataFile.Open();
-
-            //p.OnOutput(new OutputHandlerEventArgs("Pre-calibration (Software Lock Mass):"));
-
-            //List<int> trainingPointCounts = new List<int>();
-            //List<LabeledDataPoint> pointList;
-            //for (int preCalibraionRound = 0; ; preCalibraionRound++)
-            //{
-            //    p.OnOutput(new OutputHandlerEventArgs("Pre-Calibration round " + preCalibraionRound));
-            //    p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
-
-            //    pointList = TrainingPointsExtractor.GetTrainingPoints(p.myMsDataFile, p.identifications, p);
-
-            //    if (preCalibraionRound >= 1 && pointList.Count <= trainingPointCounts[preCalibraionRound - 1])
-            //        break;
-
-            //    trainingPointCounts.Add(pointList.Count);
-
-            //    var pointList1 = pointList.Where((b) => b.inputs[0] == 1).ToList();
-            //    WriteDataToFiles(pointList1, "pointList1" + p.myMsDataFile.Name + preCalibraionRound);
-            //    p.OnOutput(new OutputHandlerEventArgs("pointList1.Count() = " + pointList1.Count()));
-            //    var pointList2 = pointList.Where((b) => b.inputs[0] == 2).ToList();
-            //    WriteDataToFiles(pointList2, "pointList2" + p.myMsDataFile.Name + preCalibraionRound);
-            //    p.OnOutput(new OutputHandlerEventArgs("pointList2.Count() = " + pointList2.Count()));
-
-            //    CalibrationFunction identityPredictor = new IdentityCalibrationFunction(p.OnOutput);
-            //    p.OnOutput(new OutputHandlerEventArgs("Uncalibrated MSE, " + identityPredictor.getMSE(pointList1) + "," + identityPredictor.getMSE(pointList2) + "," + identityPredictor.getMSE(pointList)));
-
-            //    CalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput, pointList1);
-            //    CalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput, pointList2);
-            //    CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-
-            //    p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
-
-            //    CalibrateSpectra(p, combinedCalibration);
-
-            //    combinedCalibration.writeNewLabels(pointList1, "pointList1preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
-            //    combinedCalibration.writeNewLabels(pointList2, "pointList2preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
-            //    p.OnOutput(new OutputHandlerEventArgs("After constant shift MSE, " + ms1regressor.getMSE(pointList1) + "," + ms2regressor.getMSE(pointList2) + "," + combinedCalibration.getMSE(pointList)));
-
-            //}
-            //    
-
+            
             List<LabeledDataPoint> pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p);
 
             p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
@@ -186,40 +145,40 @@ namespace mzCal
 
             List<bool[]> featuresArray = new List<bool[]>();
             featuresArray.Add(new bool[6] { false, true, false, false, false, false });
-            //featuresArray.Add(new bool[6] { false, false, true, false, false, false });
-            //featuresArray.Add(new bool[6] { false, false, false, true, false, false });
-            //featuresArray.Add(new bool[6] { false, false, false, false, true, false });
-            //featuresArray.Add(new bool[6] { false, false, false, false, false, true });
+            featuresArray.Add(new bool[6] { false, false, true, false, false, false });
+            featuresArray.Add(new bool[6] { false, false, false, true, false, false });
+            featuresArray.Add(new bool[6] { false, false, false, false, true, false });
+            featuresArray.Add(new bool[6] { false, false, false, false, false, true });
 
-            //featuresArray.Add(new bool[6] { false, true, true, false, false, false });
-            //featuresArray.Add(new bool[6] { false, true, false, true, false, false });
-            //featuresArray.Add(new bool[6] { false, true, false, false, true, false });
-            //featuresArray.Add(new bool[6] { false, true, false, false, false, true });
-            //featuresArray.Add(new bool[6] { false, false, true, true, false, false });
-            //featuresArray.Add(new bool[6] { false, false, true, false, true, false });
-            //featuresArray.Add(new bool[6] { false, false, true, false, false, true });
-            //featuresArray.Add(new bool[6] { false, false, false, true, true, false });
-            //featuresArray.Add(new bool[6] { false, false, false, true, false, true });
-            //featuresArray.Add(new bool[6] { false, false, false, false, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, false, false, false });
+            featuresArray.Add(new bool[6] { false, true, false, true, false, false });
+            featuresArray.Add(new bool[6] { false, true, false, false, true, false });
+            featuresArray.Add(new bool[6] { false, true, false, false, false, true });
+            featuresArray.Add(new bool[6] { false, false, true, true, false, false });
+            featuresArray.Add(new bool[6] { false, false, true, false, true, false });
+            featuresArray.Add(new bool[6] { false, false, true, false, false, true });
+            featuresArray.Add(new bool[6] { false, false, false, true, true, false });
+            featuresArray.Add(new bool[6] { false, false, false, true, false, true });
+            featuresArray.Add(new bool[6] { false, false, false, false, true, true });
 
-            //featuresArray.Add(new bool[6] { false, false, false, true, true, true });
-            //featuresArray.Add(new bool[6] { false, false, true, false, true, true });
-            //featuresArray.Add(new bool[6] { false, false, true, true, false, true });
-            //featuresArray.Add(new bool[6] { false, false, true, true, true, false });
-            //featuresArray.Add(new bool[6] { false, true, false, false, true, true });
-            //featuresArray.Add(new bool[6] { false, true, false, true, false, true });
-            //featuresArray.Add(new bool[6] { false, true, false, true, true, false });
-            //featuresArray.Add(new bool[6] { false, true, true, false, false, true });
-            //featuresArray.Add(new bool[6] { false, true, true, false, true, false });
-            //featuresArray.Add(new bool[6] { false, true, true, true, false, false });
+            featuresArray.Add(new bool[6] { false, false, false, true, true, true });
+            featuresArray.Add(new bool[6] { false, false, true, false, true, true });
+            featuresArray.Add(new bool[6] { false, false, true, true, false, true });
+            featuresArray.Add(new bool[6] { false, false, true, true, true, false });
+            featuresArray.Add(new bool[6] { false, true, false, false, true, true });
+            featuresArray.Add(new bool[6] { false, true, false, true, false, true });
+            featuresArray.Add(new bool[6] { false, true, false, true, true, false });
+            featuresArray.Add(new bool[6] { false, true, true, false, false, true });
+            featuresArray.Add(new bool[6] { false, true, true, false, true, false });
+            featuresArray.Add(new bool[6] { false, true, true, true, false, false });
 
-            //featuresArray.Add(new bool[6] { false, false, true, true, true, true });
-            //featuresArray.Add(new bool[6] { false, true, false, true, true, true });
-            //featuresArray.Add(new bool[6] { false, true, true, false, true, true });
-            //featuresArray.Add(new bool[6] { false, true, true, true, false, true });
-            //featuresArray.Add(new bool[6] { false, true, true, true, true, false });
+            featuresArray.Add(new bool[6] { false, false, true, true, true, true });
+            featuresArray.Add(new bool[6] { false, true, false, true, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, false, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, true, false, true });
+            featuresArray.Add(new bool[6] { false, true, true, true, true, false });
 
-            //featuresArray.Add(new bool[6] { false, true, true, true, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, true, true, true });
 
             List<bool[]> logArray = new List<bool[]>();
 
@@ -262,33 +221,33 @@ namespace mzCal
                     }
                 }
 
-                //    foreach (var logVars in logArray)
-                //    {
-                //        foreach (var ok in featuresArray)
-                //        {
-                //            ms1regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                //            ms2regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                //            combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                //            combinedCalibration.writeNewLabels(trainList1, "trainList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //            combinedCalibration.writeNewLabels(trainList2, "trainList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //            combinedCalibration.writeNewLabels(testList1, "testList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //            combinedCalibration.writeNewLabels(testList2, "testList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //            MS1mse = ms1regressor.getMSE(testList1);
-                //            MS2mse = ms2regressor.getMSE(testList2);
-                //            combinedMSE = combinedCalibration.getMSE(testList);
-                //            p.OnOutput(new OutputHandlerEventArgs("Quadratic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                //            if (MS1mse < bestMS1MSE)
-                //            {
-                //                bestMS1MSE = MS1mse;
-                //                bestMS1predictor = ms1regressor;
-                //            }
-                //            if (MS2mse < bestMS2MSE)
-                //            {
-                //                bestMS2MSE = MS2mse;
-                //                bestMS2predictor = ms2regressor;
-                //            }
-                //        }
-                //    }
+                foreach (var logVars in logArray)
+                {
+                    foreach (var ok in featuresArray)
+                    {
+                        ms1regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
+                        ms2regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
+                        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+                        combinedCalibration.writeNewLabels(trainList1, "trainList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                        combinedCalibration.writeNewLabels(trainList2, "trainList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                        combinedCalibration.writeNewLabels(testList1, "testList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                        combinedCalibration.writeNewLabels(testList2, "testList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+                        MS1mse = ms1regressor.getMSE(testList1);
+                        MS2mse = ms2regressor.getMSE(testList2);
+                        combinedMSE = combinedCalibration.getMSE(testList);
+                        p.OnOutput(new OutputHandlerEventArgs("Quadratic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
+                        if (MS1mse < bestMS1MSE)
+                        {
+                            bestMS1MSE = MS1mse;
+                            bestMS1predictor = ms1regressor;
+                        }
+                        if (MS2mse < bestMS2MSE)
+                        {
+                            bestMS2MSE = MS2mse;
+                            bestMS2predictor = ms2regressor;
+                        }
+                    }
+                }
 
                 //foreach (var logVars in logArray)
                 //{

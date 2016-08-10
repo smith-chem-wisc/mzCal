@@ -36,6 +36,9 @@ namespace mzCal
         public bool calibrateSpectra = true;
         internal int randomSeed;
         internal bool deconvolute;
+        public string paramString="";
+        public int minMS2;
+        public int minMS1;
 
         #region Constructors
 

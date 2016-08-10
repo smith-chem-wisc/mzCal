@@ -242,7 +242,7 @@ namespace mzCal
                             }
                         }
                         //else if (trainingPointsToAverage.Count < Math.Max(2, intensities.Where(b => b > 0.15).Count()))
-                        else if (trainingPointsToAverage.Count < Math.Min(2, intensities.Count()))
+                        else if (trainingPointsToAverage.Count < Math.Min(p.minMS2, intensities.Count()))
                         {
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                             {
@@ -485,8 +485,7 @@ namespace mzCal
                             p.OnWatch(new OutputHandlerEventArgs("    Not adding, since originalIntensities[0] is " + originalIntensities[0] + " which is too low"));
                         }
                     }
-                    //else if (trainingPointsToAverage.Count < Math.Max(5, originalIntensities.Where(b => b > 0.15).Count()))
-                    else if (trainingPointsToAverage.Count < Math.Min(4, originalIntensities.Count()))
+                    else if (trainingPointsToAverage.Count < Math.Min(p.minMS1, originalIntensities.Count()))
                     {
                         if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)))
                         {
