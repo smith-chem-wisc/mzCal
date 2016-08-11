@@ -265,7 +265,7 @@ namespace mzCal
                         if (trainingPointsToAverage.Count == 0 && startingToAdd == true)
                             break;
                         //else if (trainingPointsToAverage.Count < Math.Max(2, intensities.Where(b => b > 0.15).Count()))
-                        if (trainingPointsToAverage.Count < Math.Min(p.minMS2, intensities.Count()))
+                        if (trainingPointsToAverage.Count < Math.Min(p.minMS2, intensities.Count()) && !(trainingPointsToAverage.Count == 1 && intensities[0] > 0.65))
                         {
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                             {
