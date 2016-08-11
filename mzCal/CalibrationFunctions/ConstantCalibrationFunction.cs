@@ -23,7 +23,7 @@ namespace mzCal
 
         public void Train(IEnumerable<LabeledDataPoint> trainingList)
         {
-            a = trainingList.Select(b => b.output).Average();
+            a = trainingList.Select(b => b.output).Median();
             onOutput(new OutputHandlerEventArgs("a = " + a));
         }
     }

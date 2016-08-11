@@ -15,8 +15,46 @@ namespace mzCal
 
             p.OnOutput(new OutputHandlerEventArgs("Opening file:"));
             p.myMsDataFile.Open();
-            
-            List<LabeledDataPoint> pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p);
+
+            p.OnOutput(new OutputHandlerEventArgs("Pre-calibration (Software Lock Mass):"));
+
+            List<int> trainingPointCounts = new List<int>();
+            List<LabeledDataPoint> pointList;
+            for (int preCalibraionRound = 0; ; preCalibraionRound++)
+            {
+                p.OnOutput(new OutputHandlerEventArgs("Pre-Calibration round " + preCalibraionRound));
+                p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
+
+                pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p);
+
+                if (preCalibraionRound >= 1 && pointList.Count <= trainingPointCounts[preCalibraionRound - 1])
+                    break;
+
+                trainingPointCounts.Add(pointList.Count);
+
+                var pointList1 = pointList.Where((b) => b.inputs[0] == 1).ToList();
+                WriteDataToFiles(pointList1, "pointList1" + p.myMsDataFile.Name + preCalibraionRound);
+                p.OnOutput(new OutputHandlerEventArgs("pointList1.Count() = " + pointList1.Count()));
+                var pointList2 = pointList.Where((b) => b.inputs[0] == 2).ToList();
+                WriteDataToFiles(pointList2, "pointList2" + p.myMsDataFile.Name + preCalibraionRound);
+                p.OnOutput(new OutputHandlerEventArgs("pointList2.Count() = " + pointList2.Count()));
+
+                CalibrationFunction identityPredictor = new IdentityCalibrationFunction(p.OnOutput);
+                p.OnOutput(new OutputHandlerEventArgs("Uncalibrated MSE, " + identityPredictor.getMSE(pointList1) + "," + identityPredictor.getMSE(pointList2) + "," + identityPredictor.getMSE(pointList)));
+
+                CalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput, pointList1);
+                CalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput, pointList2);
+                CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+
+                p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
+
+                CalibrateSpectra(p, combinedCalibration);
+
+                combinedCalibration.writeNewLabels(pointList1, "pointList1preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
+                combinedCalibration.writeNewLabels(pointList2, "pointList2preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
+                p.OnOutput(new OutputHandlerEventArgs("After constant shift MSE, " + ms1regressor.getMSE(pointList1) + "," + ms2regressor.getMSE(pointList2) + "," + combinedCalibration.getMSE(pointList)));
+
+            }
 
             p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
 
@@ -62,7 +100,7 @@ namespace mzCal
             var testList2 = testList.Where((b) => b.inputs[0] == 2).ToList();
             WriteDataToFiles(testList2, "test2" + p.myMsDataFile.Name);
             p.OnOutput(new OutputHandlerEventArgs("testList2.Count() = " + testList2.Count()));
-            
+
             CalibrationFunction bestMS1predictor = new IdentityCalibrationFunction(p.OnOutput);
             CalibrationFunction bestMS2predictor = new IdentityCalibrationFunction(p.OnOutput);
             CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(bestMS1predictor, bestMS2predictor);
