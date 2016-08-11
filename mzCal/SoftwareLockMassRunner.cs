@@ -22,19 +22,19 @@ namespace mzCal
 
             Calibrate(pointList, p);
 
-            //if (p.deconvolute)
-            //{
-            //    p.OnOutput(new OutputHandlerEventArgs("Deconvolution"));
-            //    foreach (var ok in p.myMsDataFile)
-            //    {
-            //        if (ok.MsnOrder == 2)
-            //        {
-            //            int precursorScanNumber;
-            //            ok.TryGetPrecursorScanNumber(out precursorScanNumber);
-            //            ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
-            //        }
-            //    }
-            //}
+            if (p.deconvolute)
+            {
+                p.OnOutput(new OutputHandlerEventArgs("Deconvolution"));
+                foreach (var ok in p.myMsDataFile)
+                {
+                    if (ok.MsnOrder == 2)
+                    {
+                        int precursorScanNumber;
+                        ok.TryGetPrecursorScanNumber(out precursorScanNumber);
+                        ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
+                    }
+                }
+            }
 
             p.postProcessing(p);
 

@@ -37,7 +37,7 @@ namespace mzCal
         internal int randomSeed;
         internal bool deconvolute;
         public string paramString = "";
-        public int minMS2 = 3;
+        public int minMS2 = 2;
         public int minMS1 = 3;
 
         #region Constructors
@@ -49,6 +49,7 @@ namespace mzCal
             MS2spectraToWatch = new HashSet<int>();
             this.randomSeed = randomSeed;
             this.deconvolute = deconvolute;
+
         }
 
         #endregion

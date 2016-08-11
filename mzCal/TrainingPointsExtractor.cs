@@ -57,7 +57,7 @@ namespace mzCal
                 List<LabeledDataPoint> candidateTrainingPointsForPeptide = new List<LabeledDataPoint>();
 
                 candidateTrainingPointsForPeptide = SearchMS2Spectrum(myMsDataFile.GetScan(ms2spectrumIndex), peptide, peptideCharge, p, out numFragmentsIdentified);
-
+                
                 //SoftwareLockMassRunner.WriteDataToFiles(candidateTrainingPointsForPeptide, ms2spectrumIndex.ToString());
 
                 // If MS2 has low evidence for peptide, skip and go to next one
@@ -78,13 +78,21 @@ namespace mzCal
                 }
                 Array.Sort(intensities, masses, Comparer<double>.Create((x, y) => y.CompareTo(x)));
 
-                SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedFromMS1HashSet, p, peptideCharge);
+                if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
+                {
+                    Console.WriteLine(" Isotopologue distribution: ");
+                    Console.WriteLine(" masses = " + string.Join(", ", masses) + "...");
+                    Console.WriteLine(" intensities = " + string.Join(", ", intensities) + "...");
+                }
 
-                SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedFromMS1HashSet, p, peptideCharge);
+
+                int lowestMS1ind = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedFromMS1HashSet, p, peptideCharge);
+
+                int highestMS1ind = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedFromMS1HashSet, p, peptideCharge);
 
                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                 {
-                    p.OnWatch(new OutputHandlerEventArgs(" myMS2score = " + numFragmentsIdentified));
+                    p.OnWatch(new OutputHandlerEventArgs(" ms1range: " + lowestMS1ind + " to " + highestMS1ind));
                 }
                 trainingPointsToReturn.AddRange(candidateTrainingPointsForPeptide);
 
@@ -365,8 +373,9 @@ namespace mzCal
             return Math.Min(bestTolerance, bestTolerance2);
         }
 
-        private static List<int> SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, double[] originalMasses, double[] originalIntensities, List<LabeledDataPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p, int peptideCharge)
+        private static int SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, double[] originalMasses, double[] originalIntensities, List<LabeledDataPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p, int peptideCharge)
         {
+            int goodIndex = -1;
             List<int> scores = new List<int>();
             var theIndex = -1;
             if (direction == 1)
@@ -515,15 +524,15 @@ namespace mzCal
 
                 } while (chargeToLookAt <= highestKnownChargeForThisPeptide + 1);
 
-                //if (myCandidatePointsForThisMS1scan.Count > 0)
+                if (myCandidatePointsForThisMS1scan.Count > 0)
+                    goodIndex = theIndex;
                 //    SoftwareLockMassRunner.WriteDataToFiles(myCandidatePointsForThisMS1scan, theIndex.ToString());
                 myCandidatePoints.AddRange(myCandidatePointsForThisMS1scan);
 
                 scores.Add(countForThisScan);
-
                 theIndex += direction;
             }
-            return scores;
+            return goodIndex;
         }
     }
 }
