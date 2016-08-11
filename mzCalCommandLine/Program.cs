@@ -19,11 +19,6 @@ namespace mzCalCommandLine
             mzCalIO.mzCalIO.Load();
 
             SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, deconvolute);
-            int minMS2 = 3;
-            int minMS1 = 3;
-
-            a.minMS1 = minMS1;
-            a.minMS2 = minMS2;
 
             SoftwareLockMassRunner.Run(a);
             
