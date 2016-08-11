@@ -7,7 +7,7 @@ namespace mzCal
 {
     public class ConstantCalibrationFunction : CalibrationFunction
     {
-        private double a;
+        public double a;
         private Action<OutputHandlerEventArgs> onOutput;
 
         public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<LabeledDataPoint> trainingList)

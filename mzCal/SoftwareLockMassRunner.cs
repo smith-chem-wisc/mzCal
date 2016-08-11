@@ -42,9 +42,12 @@ namespace mzCal
                 CalibrationFunction identityPredictor = new IdentityCalibrationFunction(p.OnOutput);
                 p.OnOutput(new OutputHandlerEventArgs("Uncalibrated MSE, " + identityPredictor.getMSE(pointList1) + "," + identityPredictor.getMSE(pointList2) + "," + identityPredictor.getMSE(pointList)));
 
-                CalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput, pointList1);
-                CalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput, pointList2);
+                ConstantCalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput, pointList1);
+                ConstantCalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput, pointList2);
                 CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+
+                TrainingPointsExtractor.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
+                TrainingPointsExtractor.toleranceInMZforMS2Search -= Math.Abs(ms1regressor.a);
 
                 p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
 
@@ -55,6 +58,7 @@ namespace mzCal
                 p.OnOutput(new OutputHandlerEventArgs("After constant shift MSE, " + ms1regressor.getMSE(pointList1) + "," + ms2regressor.getMSE(pointList2) + "," + combinedCalibration.getMSE(pointList)));
 
             }
+
 
             p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
 

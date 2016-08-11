@@ -11,8 +11,8 @@ namespace mzCal
 {
     class TrainingPointsExtractor
     {
-        private static double toleranceInMZforMS2Search = 0.02;
-        private static double toleranceInMZforMS1Search = 0.01;
+        public static double toleranceInMZforMS2Search = 0.02;
+        public static double toleranceInMZforMS1Search = 0.01;
         public static List<LabeledDataPoint> GetDataPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
         {
             p.OnOutput(new OutputHandlerEventArgs("Extracting data points:"));
