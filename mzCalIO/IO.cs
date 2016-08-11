@@ -54,6 +54,16 @@ namespace mzCalIO
             //a.MS1spectraToWatch.Add(17639);
             //a.MS2spectraToWatch.Add(17706);
 
+            a.MS2spectraToWatch.Add(21025);
+            //a.MS2spectraToWatch.Add(23430);
+            //a.MS2spectraToWatch.Add(21718);
+            //a.MS2spectraToWatch.Add(21365);
+            //a.MS2spectraToWatch.Add(21376);
+            //a.MS2spectraToWatch.Add(21035);
+            //a.MS2spectraToWatch.Add(23481);
+            //a.MS2spectraToWatch.Add(23480);
+            //a.MS2spectraToWatch.Add(23029);
+            //a.MS2spectraToWatch.Add(10883);
 
 
             //a.MS2spectraToWatch.Add(5998);

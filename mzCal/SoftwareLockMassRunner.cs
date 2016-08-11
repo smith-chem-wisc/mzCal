@@ -145,40 +145,40 @@ namespace mzCal
 
             List<bool[]> featuresArray = new List<bool[]>();
             featuresArray.Add(new bool[6] { false, true, false, false, false, false });
-            //featuresArray.Add(new bool[6] { false, false, true, false, false, false });
-            //featuresArray.Add(new bool[6] { false, false, false, true, false, false });
-            //featuresArray.Add(new bool[6] { false, false, false, false, true, false });
-            //featuresArray.Add(new bool[6] { false, false, false, false, false, true });
+            featuresArray.Add(new bool[6] { false, false, true, false, false, false });
+            featuresArray.Add(new bool[6] { false, false, false, true, false, false });
+            featuresArray.Add(new bool[6] { false, false, false, false, true, false });
+            featuresArray.Add(new bool[6] { false, false, false, false, false, true });
 
-            //featuresArray.Add(new bool[6] { false, true, true, false, false, false });
-            //featuresArray.Add(new bool[6] { false, true, false, true, false, false });
-            //featuresArray.Add(new bool[6] { false, true, false, false, true, false });
-            //featuresArray.Add(new bool[6] { false, true, false, false, false, true });
-            //featuresArray.Add(new bool[6] { false, false, true, true, false, false });
-            //featuresArray.Add(new bool[6] { false, false, true, false, true, false });
-            //featuresArray.Add(new bool[6] { false, false, true, false, false, true });
-            //featuresArray.Add(new bool[6] { false, false, false, true, true, false });
-            //featuresArray.Add(new bool[6] { false, false, false, true, false, true });
-            //featuresArray.Add(new bool[6] { false, false, false, false, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, false, false, false });
+            featuresArray.Add(new bool[6] { false, true, false, true, false, false });
+            featuresArray.Add(new bool[6] { false, true, false, false, true, false });
+            featuresArray.Add(new bool[6] { false, true, false, false, false, true });
+            featuresArray.Add(new bool[6] { false, false, true, true, false, false });
+            featuresArray.Add(new bool[6] { false, false, true, false, true, false });
+            featuresArray.Add(new bool[6] { false, false, true, false, false, true });
+            featuresArray.Add(new bool[6] { false, false, false, true, true, false });
+            featuresArray.Add(new bool[6] { false, false, false, true, false, true });
+            featuresArray.Add(new bool[6] { false, false, false, false, true, true });
 
-            //featuresArray.Add(new bool[6] { false, false, false, true, true, true });
-            //featuresArray.Add(new bool[6] { false, false, true, false, true, true });
-            //featuresArray.Add(new bool[6] { false, false, true, true, false, true });
-            //featuresArray.Add(new bool[6] { false, false, true, true, true, false });
-            //featuresArray.Add(new bool[6] { false, true, false, false, true, true });
-            //featuresArray.Add(new bool[6] { false, true, false, true, false, true });
-            //featuresArray.Add(new bool[6] { false, true, false, true, true, false });
-            //featuresArray.Add(new bool[6] { false, true, true, false, false, true });
-            //featuresArray.Add(new bool[6] { false, true, true, false, true, false });
-            //featuresArray.Add(new bool[6] { false, true, true, true, false, false });
+            featuresArray.Add(new bool[6] { false, false, false, true, true, true });
+            featuresArray.Add(new bool[6] { false, false, true, false, true, true });
+            featuresArray.Add(new bool[6] { false, false, true, true, false, true });
+            featuresArray.Add(new bool[6] { false, false, true, true, true, false });
+            featuresArray.Add(new bool[6] { false, true, false, false, true, true });
+            featuresArray.Add(new bool[6] { false, true, false, true, false, true });
+            featuresArray.Add(new bool[6] { false, true, false, true, true, false });
+            featuresArray.Add(new bool[6] { false, true, true, false, false, true });
+            featuresArray.Add(new bool[6] { false, true, true, false, true, false });
+            featuresArray.Add(new bool[6] { false, true, true, true, false, false });
 
-            //featuresArray.Add(new bool[6] { false, false, true, true, true, true });
-            //featuresArray.Add(new bool[6] { false, true, false, true, true, true });
-            //featuresArray.Add(new bool[6] { false, true, true, false, true, true });
-            //featuresArray.Add(new bool[6] { false, true, true, true, false, true });
-            //featuresArray.Add(new bool[6] { false, true, true, true, true, false });
+            featuresArray.Add(new bool[6] { false, false, true, true, true, true });
+            featuresArray.Add(new bool[6] { false, true, false, true, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, false, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, true, false, true });
+            featuresArray.Add(new bool[6] { false, true, true, true, true, false });
 
-            //featuresArray.Add(new bool[6] { false, true, true, true, true, true });
+            featuresArray.Add(new bool[6] { false, true, true, true, true, true });
 
             List<bool[]> logArray = new List<bool[]>();
 
