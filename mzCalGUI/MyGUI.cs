@@ -20,7 +20,11 @@ namespace mzCalGUI
             mzCalIO.mzCalIO.Load();
             dataGridView1.DataSource = myListOfEntries;
             dataGridView1.Columns[3].Visible = false;
-            this.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (version.Equals("1.0.0.0"))
+                this.Text = "Not a release version";
+            else
+                this.Text = version;
         }
 
         private void buttonAddFiles_Click(object sender, EventArgs e)
