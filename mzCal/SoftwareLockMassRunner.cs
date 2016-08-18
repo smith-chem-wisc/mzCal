@@ -33,9 +33,19 @@ namespace mzCal
                 trainingPointCounts.Add(pointList.Count);
 
                 var pointList1 = pointList.Where((b) => b.inputs[0] == 1).ToList();
+                if (pointList1.Count == 0)
+                {
+                    p.OnOutput(new OutputHandlerEventArgs("Not enough training points, identification quality is poor"));
+                    return;
+                }
                 WriteDataToFiles(pointList1, "pointList1" + p.myMsDataFile.Name + preCalibraionRound);
                 p.OnOutput(new OutputHandlerEventArgs("pointList1.Count() = " + pointList1.Count()));
                 var pointList2 = pointList.Where((b) => b.inputs[0] == 2).ToList();
+                if (pointList2.Count == 0)
+                {
+                    p.OnOutput(new OutputHandlerEventArgs("Not enough training points, identification quality is poor"));
+                    return;
+                }
                 WriteDataToFiles(pointList2, "pointList2" + p.myMsDataFile.Name + preCalibraionRound);
                 p.OnOutput(new OutputHandlerEventArgs("pointList2.Count() = " + pointList2.Count()));
 
@@ -47,7 +57,7 @@ namespace mzCal
                 CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
 
                 TrainingPointsExtractor.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
-                TrainingPointsExtractor.toleranceInMZforMS2Search -= Math.Abs(ms1regressor.a);
+                TrainingPointsExtractor.toleranceInMZforMS2Search -= Math.Abs(ms2regressor.a);
 
                 p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
 

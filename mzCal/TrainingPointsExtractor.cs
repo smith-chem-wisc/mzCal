@@ -13,6 +13,9 @@ namespace mzCal
     {
         public static double toleranceInMZforMS2Search = 0.02;
         public static double toleranceInMZforMS1Search = 0.01;
+
+        private static int numFragmentsNeeded = 10;
+
         public static List<LabeledDataPoint> GetDataPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
         {
             p.OnOutput(new OutputHandlerEventArgs("Extracting data points:"));
@@ -60,8 +63,10 @@ namespace mzCal
 
                 //SoftwareLockMassRunner.WriteDataToFiles(candidateTrainingPointsForPeptide, ms2spectrumIndex.ToString());
 
+                //p.OnWatch(new OutputHandlerEventArgs(numFragmentsIdentified.ToString()));
+
                 // If MS2 has low evidence for peptide, skip and go to next one
-                if (numFragmentsIdentified < 10)
+                if (numFragmentsIdentified < numFragmentsNeeded)
                     continue;
 
                 // Calculate isotopic distribution of the full peptide
