@@ -5,11 +5,8 @@ namespace mzCal
 {
     internal class ByHandCalibrationFunction : CalibrationFunction
     {
-        private Action<OutputHandlerEventArgs> onOutput;
-
         public ByHandCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList1)
         {
-            this.onOutput = onOutput;
         }
 
         public override double Predict(double[] t)
