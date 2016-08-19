@@ -6,12 +6,10 @@ namespace mzCal
 {
     public class ConstantScanWiseCalibrationFunction : CalibrationFunction
     {
-        private Action<OutputHandlerEventArgs> onOutput;
         private MyBinaryTree myBinaryTree;
 
         public ConstantScanWiseCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<LabeledDataPoint> trainingList)
         {
-            this.onOutput = onOutput;
             myBinaryTree  = new MyBinaryTree(trainingList.ToList());
 
         }
