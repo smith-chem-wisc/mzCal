@@ -44,7 +44,7 @@ namespace mzCalIO
             }
             int randomSeed = 1;
             var identifications = new MzidIdentifications(mzidFile);
-            var a = new SoftwareLockMassParams(myMsDataFile, randomSeed, deconvolute, identifications.fragmentTolerance.Value);
+            var a = new SoftwareLockMassParams(myMsDataFile, randomSeed, deconvolute, identifications.fragmentTolerance.Value * 2);
             a.outputHandler += p_outputHandler;
             a.progressHandler += p_progressHandler;
             a.watchHandler += p_watchHandler;

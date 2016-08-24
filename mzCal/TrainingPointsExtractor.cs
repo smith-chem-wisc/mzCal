@@ -289,7 +289,7 @@ namespace mzCal
 
                             double addedMZ = trainingPointsToAverage.Select(b => b.dp.mz).Average();
                             double relativeMZ = (addedMZ - ms2DataScan.ScanWindowRange.Minimum) / (ms2DataScan.ScanWindowRange.Maximum - ms2DataScan.ScanWindowRange.Minimum);
-                            double[] inputs = new double[9] { 2, addedMZ, ms2DataScan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Average(), ms2DataScan.TotalIonCurrent, ms2DataScan.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ };
+                            double[] inputs = new double[8] { 2, addedMZ, ms2DataScan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Sum() / ms2DataScan.TotalIonCurrent, ms2DataScan.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ };
                             var a = new LabeledDataPoint(inputs, trainingPointsToAverage.Select(b => b.l).Median());
 
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
@@ -316,79 +316,6 @@ namespace mzCal
             }
             candidateFragmentsIdentified = numFragmentsIdentified;
             return myCandidatePoints;
-        }
-
-        private static double getTolerance(double[] sortedList)
-        {
-            var tolerance = 0.3;
-            double bestTolerance = double.NaN;
-            double bestTolerance2 = double.NaN;
-            double prevTolerance = double.NaN;
-            double prevRatio = 0;
-            bool wasRising = false;
-            double bestTolScore = 0;
-            while (true)
-            {
-                int countGood = 0;
-                int countBadUp = 0;
-                int countBadDown = 1;
-                double sumDeltaGood = 0;
-                double sumDeltaBadUp = 0;
-                double sumDeltaBadDown = 0;
-
-                for (int i = 1; i < sortedList.Count(); i++)
-                {
-                    if (sortedList[i - 1] < -tolerance && sortedList[i] < -tolerance)
-                        sumDeltaBadDown += sortedList[i] - sortedList[i - 1];
-                    if (sortedList[i - 1] >= -tolerance && sortedList[i] >= -tolerance
-                        && sortedList[i - 1] <= tolerance && sortedList[i] <= tolerance)
-                        sumDeltaGood += sortedList[i] - sortedList[i - 1];
-                    if (sortedList[i - 1] > tolerance && sortedList[i] > tolerance)
-                        sumDeltaBadUp += sortedList[i] - sortedList[i - 1];
-
-                    if (sortedList[i] < -tolerance)
-                        countBadDown++;
-                    else if (sortedList[i] > tolerance)
-                        countBadUp++;
-                    else
-                        countGood++;
-                }
-
-                if (countBadDown + countBadUp - 2 <= 0)
-                {
-                    tolerance *= 0.99;
-                    continue;
-                }
-                double currentRatio = ((sumDeltaBadDown + sumDeltaBadUp) / (countBadDown + countBadUp - 2));
-
-                double tolScore = Math.Pow(countGood, 5) / tolerance;
-
-                //Console.WriteLine(tolerance + "," + currentRatio + "," + sumDeltaGood / (countGood - 1) + "," + countGood + "," + tolScore);
-
-                if (tolScore > bestTolScore)
-                {
-                    bestTolScore = tolScore;
-                    bestTolerance2 = tolerance;
-                }
-
-                if (currentRatio > prevRatio)
-                    wasRising = true;
-                if (currentRatio < prevRatio && wasRising)
-                {
-                    wasRising = false;
-                    bestTolerance = prevTolerance;
-                }
-
-                if ((double)countGood / sortedList.Count() <= 0.1 || tolerance < 1e-5)
-                    break;
-
-                prevRatio = currentRatio;
-                prevTolerance = tolerance;
-
-                tolerance *= 0.99;
-            }
-
-            return Math.Min(bestTolerance, bestTolerance2);
         }
 
         private static int SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, double[] originalMasses, double[] originalIntensities, List<LabeledDataPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p, int peptideCharge)
@@ -524,7 +451,7 @@ namespace mzCal
                         addedAscan = true;
                         startingToAddCharges = true;
                         countForThisScan += 1;
-                        double[] inputs = new double[6] { 1, trainingPointsToAverage.Select(b => b.dp.mz).Average(), fullMS1scan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Average(), fullMS1scan.TotalIonCurrent, fullMS1scan.InjectionTime };
+                        double[] inputs = new double[5] { 1, trainingPointsToAverage.Select(b => b.dp.mz).Average(), fullMS1scan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Sum() / fullMS1scan.TotalIonCurrent, fullMS1scan.InjectionTime };
                         var a = new LabeledDataPoint(inputs, trainingPointsToAverage.Select(b => b.l).Median());
                         //if (a.output > 0)
                         //    Console.WriteLine(theIndex + "," + ms2spectrumIndex);
