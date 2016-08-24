@@ -35,10 +35,12 @@ namespace mzCalIO
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
             {
                 myMsDataFile = new Mzml(origDataFile);
+                myMsDataFile.Open();
             }
             else
             {
                 myMsDataFile = new ThermoRawFile(origDataFile);
+                myMsDataFile.Open();
                 if (((ThermoRawFile)myMsDataFile).monoisotopicPrecursorSelectionEnabled)
                     deconvolute = false;
             }
