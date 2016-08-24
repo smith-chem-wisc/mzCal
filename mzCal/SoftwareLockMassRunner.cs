@@ -218,7 +218,7 @@ namespace mzCal
 
             List<bool[]> logArray = new List<bool[]>();
 
-            logArray.Add(new bool[6] { false, false, false, false, true });
+            logArray.Add(new bool[5] { false, false, false, false, true });
             ////logArray.Add(new bool[6] { false, false, false, false, true, true });
             ////logArray.Add(new bool[6] { false, false, false, true, false, true });
             ////logArray.Add(new bool[6] { false, false, false, true, true, false });
