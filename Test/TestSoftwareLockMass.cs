@@ -37,8 +37,6 @@ namespace Test
             Console.Write(e.progress + "% ");
         }
 
-
-
         [Test]
         public void TestConstantCalibration()
         {

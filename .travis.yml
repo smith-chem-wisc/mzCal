@@ -8,7 +8,7 @@ script:
 - cat mzCalCommandLine/Properties/AssemblyInfo.cs
 - if [ -n "${TRAVIS_TAG}" ]; then sed -i -- 's/1.0.0.0/'$TRAVIS_TAG'/g' mzCalCommandLine/Properties/AssemblyInfo.cs ; fi
 - cat mzCalCommandLine/Properties/AssemblyInfo.cs
-- xbuild /p:Configuration=TestAndRelease mzCal.sln
+- xbuild /p:Configuration=TestAndReleaseTravis mzCal.sln
 - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
 - tar -zcvf MonoCommandLine.tar.gz -C mzCalCommandLine/bin/Release .
 - mono ./mzCalCommandLine/bin/Release/mzCal.exe Test/myFakeFile.mzML Test/myIdentifications.mzid
