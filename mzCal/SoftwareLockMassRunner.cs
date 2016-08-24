@@ -12,10 +12,7 @@ namespace mzCal
         {
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
-
-            p.OnOutput(new OutputHandlerEventArgs("Opening file:"));
-            p.myMsDataFile.Open();
-
+            
             p.OnOutput(new OutputHandlerEventArgs("Pre-calibration (Software Lock Mass):"));
 
             List<int> trainingPointCounts = new List<int>();

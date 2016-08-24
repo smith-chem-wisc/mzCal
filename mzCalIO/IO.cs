@@ -33,10 +33,14 @@ namespace mzCalIO
             IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
             bool deconvolute = true;
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
+            {
                 myMsDataFile = new Mzml(origDataFile);
+                myMsDataFile.Open();
+            }
             else
             {
                 myMsDataFile = new ThermoRawFile(origDataFile);
+                myMsDataFile.Open();
                 if (((ThermoRawFile)myMsDataFile).monoisotopicPrecursorSelectionEnabled)
                     deconvolute = false;
             }
