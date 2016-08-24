@@ -27,7 +27,7 @@ namespace mzCal
                 pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p);
 
                 if (preCalibraionRound >= 1 && pointList.Count <= trainingPointCounts[preCalibraionRound - 1])
-                    break;  
+                    break;
 
                 trainingPointCounts.Add(pointList.Count);
 
@@ -416,6 +416,8 @@ namespace mzCal
 
         public static void WriteDataToFiles(IEnumerable<LabeledDataPoint> trainingPoints, string prefix)
         {
+            if (trainingPoints.Count() == 0)
+                return;
             var fullFileName = Path.Combine(@"DataPoints", prefix + ".dat");
             Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));
 
