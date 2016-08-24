@@ -28,7 +28,7 @@ namespace mzCal
                 pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p);
 
                 if (preCalibraionRound >= 1 && pointList.Count <= trainingPointCounts[preCalibraionRound - 1])
-                    break;
+                    break;  
 
                 trainingPointCounts.Add(pointList.Count);
 
@@ -57,7 +57,7 @@ namespace mzCal
                 CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
 
                 TrainingPointsExtractor.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
-                TrainingPointsExtractor.toleranceInMZforMS2Search -= Math.Abs(ms2regressor.a);
+                p.toleranceInMZforMS2Search -= Math.Abs(ms2regressor.a);
 
                 p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
 

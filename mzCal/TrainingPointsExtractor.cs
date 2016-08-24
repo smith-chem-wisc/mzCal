@@ -11,7 +11,6 @@ namespace mzCal
 {
     class TrainingPointsExtractor
     {
-        public static double toleranceInMZforMS2Search = 0.02;
         public static double toleranceInMZforMS1Search = 0.01;
 
         private static int numFragmentsNeeded = 10;
@@ -25,7 +24,7 @@ namespace mzCal
             // Set of peaks, identified by m/z and retention time. If a peak is in here, it means it has been a part of an accepted identification, and should be rejected
             HashSet<Tuple<double, double>> peaksAddedFromMS1HashSet = new HashSet<Tuple<double, double>>();
 
-            int numIdentifications = identifications.Count();
+            int numIdentifications = identifications.Count;
             // Loop over all identifications
             for (int matchIndex = 0; matchIndex < numIdentifications; matchIndex++)
             {
@@ -157,13 +156,13 @@ namespace mzCal
                     if (monoisotopicMZ < scanWindowRange.Minimum)
                         break;
                     var closestPeakMZ = ms2DataScan.MassSpectrum.GetClosestPeakXvalue(monoisotopicMZ);
-                    if (Math.Abs(closestPeakMZ - monoisotopicMZ) < toleranceInMZforMS2Search)
+                    if (Math.Abs(closestPeakMZ - monoisotopicMZ) < p.toleranceInMZforMS2Search)
                     {
                         if (!computedIsotopologues)
                         {
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                             {
-                                Console.WriteLine("    Computing isotopologues because absolute error " + Math.Abs(closestPeakMZ - monoisotopicMZ) + " is smaller than tolerance " + toleranceInMZforMS2Search);
+                                Console.WriteLine("    Computing isotopologues because absolute error " + Math.Abs(closestPeakMZ - monoisotopicMZ) + " is smaller than tolerance " + p.toleranceInMZforMS2Search);
                                 Console.WriteLine("    Charge was = " + chargeToLookAt + "  closestPeakMZ = " + closestPeakMZ + " while monoisotopicMZ = " + monoisotopicMZ);
                             }
 
@@ -228,7 +227,7 @@ namespace mzCal
                         foreach (double a in masses)
                         {
                             double theMZ = a.ToMassToChargeRatio(chargeToLookAt);
-                            var npwr = ms2DataScan.MassSpectrum.NumPeaksWithinRange(theMZ - toleranceInMZforMS2Search, theMZ + toleranceInMZforMS2Search);
+                            var npwr = ms2DataScan.MassSpectrum.NumPeaksWithinRange(theMZ - p.toleranceInMZforMS2Search, theMZ + p.toleranceInMZforMS2Search);
                             if (npwr == 0)
                             {
                                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))

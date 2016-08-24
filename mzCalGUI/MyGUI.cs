@@ -43,13 +43,17 @@ namespace mzCalGUI
 
         private void buttonCalibrate_Click(object sender, EventArgs e)
         {
+            var t = new Thread(() => runMultiple(myListOfEntries, P_outputHandler, P_progressHandler, P_watchHandler));
+            t.IsBackground = true;
+            t.Start();
+        }
+
+        private static void runMultiple(BindingList<AnEntry> myListOfEntries, EventHandler<OutputHandlerEventArgs> oh, EventHandler<ProgressHandlerEventArgs> ph, EventHandler<OutputHandlerEventArgs> wh)
+        {
             foreach (var anEntry in myListOfEntries)
             {
-                SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, deconvoluteCheckBox.Checked);
-
-                var t = new Thread(() => SoftwareLockMassRunner.Run(a));
-                t.IsBackground = true;
-                t.Start();
+                SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(anEntry.spectraFile, oh, ph, wh, anEntry.mzidFile);
+                SoftwareLockMassRunner.Run(a);
             }
         }
 

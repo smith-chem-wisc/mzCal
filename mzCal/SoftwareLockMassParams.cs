@@ -39,16 +39,18 @@ namespace mzCal
         public string paramString = "";
         public int minMS2 = 2;
         public int minMS1 = 3;
+        public double toleranceInMZforMS2Search;
 
         #region Constructors
 
-        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, int randomSeed, bool deconvolute)
+        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, int randomSeed, bool deconvolute, double toleranceInMZforMS2Search)
         {
             this.myMsDataFile = myMsDataFile;
             MS1spectraToWatch = new HashSet<int>();
             MS2spectraToWatch = new HashSet<int>();
             this.randomSeed = randomSeed;
             this.deconvolute = deconvolute;
+            this.toleranceInMZforMS2Search = toleranceInMZforMS2Search;
 
         }
 
