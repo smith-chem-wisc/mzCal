@@ -289,7 +289,7 @@ namespace mzCal
 
                             double addedMZ = trainingPointsToAverage.Select(b => b.dp.mz).Average();
                             double relativeMZ = (addedMZ - ms2DataScan.ScanWindowRange.Minimum) / (ms2DataScan.ScanWindowRange.Maximum - ms2DataScan.ScanWindowRange.Minimum);
-                            double[] inputs = new double[8] { 2, addedMZ, ms2DataScan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Sum() / ms2DataScan.TotalIonCurrent, ms2DataScan.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ };
+                            double[] inputs = new double[8] { 2, addedMZ, ms2DataScan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Average() / ms2DataScan.TotalIonCurrent, ms2DataScan.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ };
                             var a = new LabeledDataPoint(inputs, trainingPointsToAverage.Select(b => b.l).Median());
 
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
@@ -451,7 +451,7 @@ namespace mzCal
                         addedAscan = true;
                         startingToAddCharges = true;
                         countForThisScan += 1;
-                        double[] inputs = new double[5] { 1, trainingPointsToAverage.Select(b => b.dp.mz).Average(), fullMS1scan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Sum() / fullMS1scan.TotalIonCurrent, fullMS1scan.InjectionTime };
+                        double[] inputs = new double[5] { 1, trainingPointsToAverage.Select(b => b.dp.mz).Average(), fullMS1scan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Average() / fullMS1scan.TotalIonCurrent, fullMS1scan.InjectionTime };
                         var a = new LabeledDataPoint(inputs, trainingPointsToAverage.Select(b => b.l).Median());
                         //if (a.output > 0)
                         //    Console.WriteLine(theIndex + "," + ms2spectrumIndex);

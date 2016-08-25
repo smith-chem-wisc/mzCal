@@ -12,7 +12,7 @@ namespace mzCal
         {
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
-            
+
             p.OnOutput(new OutputHandlerEventArgs("Pre-calibration (Software Lock Mass):"));
 
             List<int> trainingPointCounts = new List<int>();
@@ -348,14 +348,14 @@ namespace mzCal
                     a.TryGetSelectedIonGuessMZ(out precursorMZ);
                     double precursorIntensity;
                     a.TryGetSelectedIonGuessIntensity(out precursorIntensity);
-                    double newSelectedMZ = precursorMZ - bestCf.Predict(new double[6] { 1, precursorMZ, precursorScan.RetentionTime, precursorIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
+                    double newSelectedMZ = precursorMZ - bestCf.Predict(new double[5] { 1, precursorMZ, precursorScan.RetentionTime, precursorIntensity / precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
 
 
                     double monoisotopicMZ;
                     a.TryGetSelectedIonGuessMonoisotopicMZ(out monoisotopicMZ);
                     double monoisotopicIntensity;
                     a.TryGetSelectedIonGuessMonoisotopicIntensity(out monoisotopicIntensity);
-                    double newMonoisotopicMZ = monoisotopicMZ - bestCf.Predict(new double[6] { 1, monoisotopicMZ, precursorScan.RetentionTime, monoisotopicIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
+                    double newMonoisotopicMZ = monoisotopicMZ - bestCf.Predict(new double[5] { 1, monoisotopicMZ, precursorScan.RetentionTime, monoisotopicIntensity / precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
 
 
 
@@ -364,7 +364,7 @@ namespace mzCal
                     double IsolationMZ;
                     a.TryGetIsolationMZ(out IsolationMZ);
 
-                    Func<MzPeak, double> theFunc = x => x.MZ - bestCf.Predict(new double[9] { 2, x.MZ, a.RetentionTime, x.Intensity, a.TotalIonCurrent, a.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, (x.MZ - a.ScanWindowRange.Minimum) / (a.ScanWindowRange.Maximum - a.ScanWindowRange.Minimum) });
+                    Func<MzPeak, double> theFunc = x => x.MZ - bestCf.Predict(new double[8] { 2, x.MZ, a.RetentionTime, x.Intensity / a.TotalIonCurrent, a.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, (x.MZ - a.ScanWindowRange.Minimum) / (a.ScanWindowRange.Maximum - a.ScanWindowRange.Minimum) });
                     a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFunc, newSelectedMZ, newMonoisotopicMZ);
 
                     if (p.MS2spectraToWatch.Contains(a.ScanNumber))
@@ -387,7 +387,7 @@ namespace mzCal
                         p.OnWatch(new OutputHandlerEventArgs(" before calibration:"));
                         p.OnWatch(new OutputHandlerEventArgs(" " + string.Join(",", a.MassSpectrum.newSpectrumExtract(p.mzRange).xArray)));
                     }
-                    Func<MzPeak, double> theFUnc = x => x.MZ - bestCf.Predict(new double[6] { 1, x.MZ, a.RetentionTime, x.Intensity, a.TotalIonCurrent, a.InjectionTime });
+                    Func<MzPeak, double> theFUnc = x => x.MZ - bestCf.Predict(new double[5] { 1, x.MZ, a.RetentionTime, x.Intensity / a.TotalIonCurrent, a.InjectionTime });
                     a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFUnc, double.NaN, double.NaN); if (p.MS1spectraToWatch.Contains(a.ScanNumber))
                     {
                         p.OnWatch(new OutputHandlerEventArgs(" after calibration:"));
@@ -406,10 +406,10 @@ namespace mzCal
 
             using (StreamWriter file = new StreamWriter(fullFileName))
             {
-                if (trainingPoints.First().inputs.Count() == 9)
-                    file.WriteLine("MS, MZ, RetentionTime, Intensity, TotalIonCurrent, InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ, label");
+                if (trainingPoints.First().inputs.Count() == 8)
+                    file.WriteLine("MS, MZ, RetentionTime, Intensity/TotalIonCurrent, InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ, label");
                 else
-                    file.WriteLine("MS, MZ, RetentionTime, Intensity, TotalIonCurrent, InjectionTime, label");
+                    file.WriteLine("MS, MZ, RetentionTime, Intensity/TotalIonCurrent, InjectionTime, label");
                 foreach (LabeledDataPoint d in trainingPoints)
                     file.WriteLine(string.Join(",", d.inputs) + "," + d.output);
             }
