@@ -47,7 +47,8 @@ namespace Test
             trainingList.Add(new LabeledDataPoint(new double[3] { 2, 2, 1 }, 0.5));
             IdentityCalibrationFunction cf = new IdentityCalibrationFunction(OnOutput);
             Assert.AreEqual(4 * Math.Pow(0.5, 2) / 4, cf.getMSE(trainingList));
-            ConstantCalibrationFunction cfconst = new ConstantCalibrationFunction(OnOutput, trainingList);
+            ConstantCalibrationFunction cfconst = new ConstantCalibrationFunction(OnOutput);
+            cfconst.Train(trainingList);
             Assert.AreEqual(0, cfconst.getMSE(trainingList));
         }
     }

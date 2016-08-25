@@ -10,10 +10,9 @@ namespace mzCal
         public double a;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<LabeledDataPoint> trainingList)
+        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
         {
             this.onOutput = onOutput;
-            Train(trainingList);
         }
 
         public override double Predict(double[] inputs)
@@ -21,7 +20,7 @@ namespace mzCal
             return a;
         }
 
-        public void Train(IEnumerable<LabeledDataPoint> trainingList)
+        public override void Train(IEnumerable<LabeledDataPoint> trainingList)
         {
             a = trainingList.Select(b => b.output).Median();
             onOutput(new OutputHandlerEventArgs("a = " + a));

@@ -6,6 +6,9 @@ namespace mzCal
 {
     public abstract class CalibrationFunction
     {
+        internal string name;
+
+        public abstract void Train(IEnumerable<LabeledDataPoint> trainingList);
         public abstract double Predict(double[] t);
         public double getMSE(IEnumerable<LabeledDataPoint> pointList)
         {
@@ -19,13 +22,13 @@ namespace mzCal
             return count == 0 ? 0 : mse / count;
         }
 
-        internal void writeNewLabels(List<LabeledDataPoint> trainList1, string v)
+        internal void writePredictedLables(List<LabeledDataPoint> trainList1, string v)
         {
-            var fullFileName = Path.Combine(@"NewLabels", v + "newLabels" + ".dat");
+            var fullFileName = Path.Combine(@"PredictedLabels", v + "newLabels" + ".dat");
             Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));
             using (StreamWriter file = new StreamWriter(fullFileName))
             {
-                file.WriteLine("NewLabel");
+                file.WriteLine("PredictedLabel");
                 foreach (LabeledDataPoint d in trainList1)
                     file.WriteLine(Predict(d.inputs));
             }

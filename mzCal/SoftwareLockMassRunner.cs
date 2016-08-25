@@ -49,8 +49,10 @@ namespace mzCal
                 CalibrationFunction identityPredictor = new IdentityCalibrationFunction(p.OnOutput);
                 p.OnOutput(new OutputHandlerEventArgs("Uncalibrated MSE, " + identityPredictor.getMSE(pointList1) + "," + identityPredictor.getMSE(pointList2) + "," + identityPredictor.getMSE(pointList)));
 
-                ConstantCalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput, pointList1);
-                ConstantCalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput, pointList2);
+                ConstantCalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput);
+                ConstantCalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput);
+                ms1regressor.Train(pointList1);
+                ms2regressor.Train(pointList2);
                 CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
 
                 TrainingPointsExtractor.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
@@ -60,12 +62,11 @@ namespace mzCal
 
                 CalibrateSpectra(p, combinedCalibration);
 
-                combinedCalibration.writeNewLabels(pointList1, "pointList1preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
-                combinedCalibration.writeNewLabels(pointList2, "pointList2preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
-                p.OnOutput(new OutputHandlerEventArgs("After constant shift MSE, " + ms1regressor.getMSE(pointList1) + "," + ms2regressor.getMSE(pointList2) + "," + combinedCalibration.getMSE(pointList)));
+                combinedCalibration.writePredictedLables(pointList1, "pointList1preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
+                combinedCalibration.writePredictedLables(pointList2, "pointList2preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
+                p.OnOutput(new OutputHandlerEventArgs("After constant shift MSE, " + ms1regressor.getMSE(pointList1) + "," + ms2regressor.getMSE(pointList2)));
 
             }
-
 
             p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
 
@@ -120,13 +121,15 @@ namespace mzCal
             double combinedMSE = combinedCalibration.getMSE(testList);
             p.OnOutput(new OutputHandlerEventArgs("Uncalibrated MSE, " + bestMS1MSE + "," + bestMS2MSE + "," + combinedMSE));
 
-            CalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput, trainList1);
-            CalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput, trainList2);
+            CalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput);
+            CalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput);
+            ms1regressor.Train(trainList1);
+            ms2regressor.Train(trainList2);
             combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-            combinedCalibration.writeNewLabels(trainList1, "trainList1Constant" + p.myMsDataFile.Name);
-            combinedCalibration.writeNewLabels(trainList2, "trainList2Constant" + p.myMsDataFile.Name);
-            combinedCalibration.writeNewLabels(testList1, "testList1Constant" + p.myMsDataFile.Name);
-            combinedCalibration.writeNewLabels(testList2, "testList2Constant" + p.myMsDataFile.Name);
+            combinedCalibration.writePredictedLables(trainList1, "trainList1Constant" + p.myMsDataFile.Name);
+            combinedCalibration.writePredictedLables(trainList2, "trainList2Constant" + p.myMsDataFile.Name);
+            combinedCalibration.writePredictedLables(testList1, "testList1Constant" + p.myMsDataFile.Name);
+            combinedCalibration.writePredictedLables(testList2, "testList2Constant" + p.myMsDataFile.Name);
             double MS1mse = ms1regressor.getMSE(testList1);
             double MS2mse = ms2regressor.getMSE(testList2);
             combinedMSE = combinedCalibration.getMSE(testList);
@@ -165,124 +168,96 @@ namespace mzCal
             //    bestMS2predictor = ms2regressor;
             //}
 
+            List<TransformFunction> transforms = new List<TransformFunction>();
+
+            transforms.Add(new TransformFunction(b => new double[1] { b[1] }, 1, "TFFFF"));
+            transforms.Add(new TransformFunction(b => new double[1] { b[2] }, 1, "FTFFF"));
+            transforms.Add(new TransformFunction(b => new double[1] { Math.Log(b[3]) }, 1, "FFTFF"));
+            transforms.Add(new TransformFunction(b => new double[1] { Math.Log(b[4]) }, 1, "FFFTF"));
+            transforms.Add(new TransformFunction(b => new double[1] { Math.Log(b[5]) }, 1, "FFFFT"));
+
+            transforms.Add(new TransformFunction(b => new double[2] { b[1], b[2] }, 2, "TTFFF"));
+            transforms.Add(new TransformFunction(b => new double[2] { b[1], Math.Log(b[3]) }, 2, "TFTFF"));
+            transforms.Add(new TransformFunction(b => new double[2] { b[1], Math.Log(b[4]) }, 2, "TFFTF"));
+            transforms.Add(new TransformFunction(b => new double[2] { b[1], Math.Log(b[5]) }, 2, "TFFFT"));
+            transforms.Add(new TransformFunction(b => new double[2] { b[2], Math.Log(b[3]) }, 2, "FTTFF"));
+            transforms.Add(new TransformFunction(b => new double[2] { b[2], Math.Log(b[4]) }, 2, "FTFTF"));
+            transforms.Add(new TransformFunction(b => new double[2] { b[2], Math.Log(b[5]) }, 2, "FTFFT"));
+            transforms.Add(new TransformFunction(b => new double[2] { Math.Log(b[3]), Math.Log(b[4]) }, 2, "FFTTF"));
+            transforms.Add(new TransformFunction(b => new double[2] { Math.Log(b[3]), Math.Log(b[5]) }, 2, "FFTFT"));
+            transforms.Add(new TransformFunction(b => new double[2] { Math.Log(b[4]), Math.Log(b[5]) }, 2, "FFFTT"));
+
+            transforms.Add(new TransformFunction(b => new double[3] { b[1], b[2], Math.Log(b[3]) }, 3, "TTTFF"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[1], b[2], Math.Log(b[4]) }, 3, "TTFTF"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[1], b[2], Math.Log(b[5]) }, 3, "TTFFT"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[1], Math.Log(b[3]), Math.Log(b[4]) }, 3, "TFTTF"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[1], Math.Log(b[3]), Math.Log(b[5]) }, 3, "TFTFT"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[1], Math.Log(b[4]), Math.Log(b[5]) }, 3, "TFFTT"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[2], Math.Log(b[3]), Math.Log(b[4]) }, 3, "FTTTF"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[2], Math.Log(b[3]), Math.Log(b[5]) }, 3, "FTTFT"));
+            transforms.Add(new TransformFunction(b => new double[3] { b[2], Math.Log(b[4]), Math.Log(b[5]) }, 3, "FTFTT"));
+            transforms.Add(new TransformFunction(b => new double[3] { Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 3, "FFTTT"));
+
+            transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[3]), Math.Log(b[4]) }, 4,"TTTTF"));
+            transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[3]), Math.Log(b[5]) }, 4, "TTTFT"));
+            transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[4]), Math.Log(b[5]) }, 4, "TTFTT"));
+            transforms.Add(new TransformFunction(b => new double[4] { b[1], Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 4, "TFTTT"));
+            transforms.Add(new TransformFunction(b => new double[4] { b[2], Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 4, "FTTTT"));
+
+            transforms.Add(new TransformFunction(b => new double[5] { b[1], b[2], Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 5, "TTTTT"));
 
 
-            //ms1regressor = new ConstantScanWiseCalibrationFunction(p.OnOutput, trainList1);
-            //ms2regressor = new ConstantScanWiseCalibrationFunction(p.OnOutput, trainList2);
-            //combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-            //combinedCalibration.writeNewLabels(trainList1, "trainList1Constant" + p.myMsDataFile.Name);
-            //combinedCalibration.writeNewLabels(trainList2, "trainList2Constant" + p.myMsDataFile.Name);
-            //combinedCalibration.writeNewLabels(testList1, "testList1Constant" + p.myMsDataFile.Name);
-            //combinedCalibration.writeNewLabels(testList2, "testList2Constant" + p.myMsDataFile.Name);
-            //MS1mse = ms1regressor.getMSE(testList1);
-            //MS2mse = ms2regressor.getMSE(testList2);
-            //combinedMSE = combinedCalibration.getMSE(testList);
-            //p.OnOutput(new OutputHandlerEventArgs("Constant Scan Wise calibration MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-            //if (MS1mse < bestMS1MSE)
-            //{
-            //    bestMS1MSE = MS1mse;
-            //    bestMS1predictor = ms1regressor;
-            //}
-            //if (MS2mse < bestMS2MSE)
-            //{
-            //    bestMS2MSE = MS2mse;
-            //    bestMS2predictor = ms2regressor;
-            //}
-
-
-
-
-            List<bool[]> featuresArray = new List<bool[]>();
-            featuresArray.Add(new bool[5] { false, false, false, false, false });
-
-            featuresArray.Add(new bool[5] { false, true, false, false, false });
-            featuresArray.Add(new bool[5] { false, false, true, false, false });
-            featuresArray.Add(new bool[5] { false, false, false, true, false });
-            featuresArray.Add(new bool[5] { false, false, false, false, true });
-
-            featuresArray.Add(new bool[5] { false, false, false, true, true });
-            featuresArray.Add(new bool[5] { false, false, true, false, true });
-            featuresArray.Add(new bool[5] { false, false, true, true, false });
-            featuresArray.Add(new bool[5] { false, true, false, false, true });
-            featuresArray.Add(new bool[5] { false, true, false, true, false });
-            featuresArray.Add(new bool[5] { false, true, true, false, false });
-
-            featuresArray.Add(new bool[5] { false, false, true, true, true });
-            featuresArray.Add(new bool[5] { false, true, false, true, true });
-            featuresArray.Add(new bool[5] { false, true, true, false, true });
-            featuresArray.Add(new bool[5] { false, true, true, true, false });
-
-            featuresArray.Add(new bool[5] { false, true, true, true, true });
-
-            List<bool[]> logArray = new List<bool[]>();
-
-            logArray.Add(new bool[5] { false, false, false, false, true });
-            ////logArray.Add(new bool[6] { false, false, false, false, true, true });
-            ////logArray.Add(new bool[6] { false, false, false, true, false, true });
-            ////logArray.Add(new bool[6] { false, false, false, true, true, false });
-            ////logArray.Add(new bool[6] { false, false, false, true, false, false });
-            ////logArray.Add(new bool[6] { false, false, false, false, true, false });
-            ////logArray.Add(new bool[6] { false, false, false, false, false, true });
-            ////logArray.Add(new bool[6] { false, false, false, false, false, false });
 
             try
             {
-                foreach (var logVars in logArray)
+                foreach (var transform in transforms)
                 {
-                    foreach (var ok in featuresArray)
+                    ms1regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, transform);
+                    ms2regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, transform);
+                    ms1regressor.Train(trainList1);
+                    ms2regressor.Train(trainList2);
+                    MS1mse = ms1regressor.getMSE(testList1);
+                    MS2mse = ms2regressor.getMSE(testList2);
+                    p.OnOutput(new OutputHandlerEventArgs(ms1regressor.name + transform.name + " MSE, " + MS1mse + "," + MS2mse));
+                    if (MS1mse < bestMS1MSE)
                     {
-                        ms1regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                        ms2regressor = new LinearCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                        combinedCalibration.writeNewLabels(trainList1, "trainList1Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(trainList2, "trainList2Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList1, "testList1Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList2, "testList2Linear" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        MS1mse = ms1regressor.getMSE(testList1);
-                        MS2mse = ms2regressor.getMSE(testList2);
-                        combinedMSE = combinedCalibration.getMSE(testList);
-                        p.OnOutput(new OutputHandlerEventArgs("Linear calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                        if (MS1mse < bestMS1MSE)
-                        {
-                            bestMS1MSE = MS1mse;
-                            bestMS1predictor = ms1regressor;
-                        }
-                        if (MS2mse < bestMS2MSE)
-                        {
-                            bestMS2MSE = MS2mse;
-                            bestMS2predictor = ms2regressor;
-                        }
+                        bestMS1MSE = MS1mse;
+                        bestMS1predictor = ms1regressor;
+                        ms1regressor.writePredictedLables(trainList1, "train1" + ms1regressor.name + transform.name + p.myMsDataFile.Name);
+                        ms1regressor.writePredictedLables(testList1, "test1" + ms1regressor.name + transform.name + p.myMsDataFile.Name);
+                    }
+                    if (MS2mse < bestMS2MSE)
+                    {
+                        bestMS2MSE = MS2mse;
+                        bestMS2predictor = ms2regressor;
+                        ms2regressor.writePredictedLables(trainList2, "train2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
+                        ms2regressor.writePredictedLables(testList2, "teset2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
                     }
                 }
-
-                foreach (var logVars in logArray)
+                foreach (var transform in transforms)
                 {
-                    foreach (var ok in featuresArray)
+                    ms1regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, transform);
+                    ms2regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, transform);
+                    ms1regressor.Train(trainList1);
+                    ms2regressor.Train(trainList2);
+                    MS1mse = ms1regressor.getMSE(testList1);
+                    MS2mse = ms2regressor.getMSE(testList2);
+                    p.OnOutput(new OutputHandlerEventArgs(ms1regressor.name + transform.name + " MSE, " + MS1mse + "," + MS2mse));
+                    if (MS1mse < bestMS1MSE)
                     {
-                        ms1regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                        ms2regressor = new QuadraticCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                        combinedCalibration.writeNewLabels(trainList1, "trainList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(trainList2, "trainList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList1, "testList1Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        combinedCalibration.writeNewLabels(testList2, "testList2Quadratic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                        MS1mse = ms1regressor.getMSE(testList1);
-                        MS2mse = ms2regressor.getMSE(testList2);
-                        combinedMSE = combinedCalibration.getMSE(testList);
-                        p.OnOutput(new OutputHandlerEventArgs("Quadratic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                        if (MS1mse < bestMS1MSE)
-                        {
-                            bestMS1MSE = MS1mse;
-                            bestMS1predictor = ms1regressor;
-                        }
-                        if (MS2mse < bestMS2MSE)
-                        {
-                            bestMS2MSE = MS2mse;
-                            bestMS2predictor = ms2regressor;
-                        }
+                        bestMS1MSE = MS1mse;
+                        bestMS1predictor = ms1regressor;
+                        ms1regressor.writePredictedLables(trainList1, "train1" + ms1regressor.name + transform.name + p.myMsDataFile.Name);
+                        ms1regressor.writePredictedLables(testList1, "test1" + ms1regressor.name + transform.name + p.myMsDataFile.Name);
+                    }
+                    if (MS2mse < bestMS2MSE)
+                    {
+                        bestMS2MSE = MS2mse;
+                        bestMS2predictor = ms2regressor;
+                        ms2regressor.writePredictedLables(trainList2, "train2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
+                        ms2regressor.writePredictedLables(testList2, "teset2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
                     }
                 }
-
                 //foreach (var logVars in logArray)
                 //{
                 //    foreach (var ok in featuresArray)
@@ -348,14 +323,14 @@ namespace mzCal
                     a.TryGetSelectedIonGuessMZ(out precursorMZ);
                     double precursorIntensity;
                     a.TryGetSelectedIonGuessIntensity(out precursorIntensity);
-                    double newSelectedMZ = precursorMZ - bestCf.Predict(new double[5] { 1, precursorMZ, precursorScan.RetentionTime, precursorIntensity / precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
+                    double newSelectedMZ = precursorMZ - bestCf.Predict(new double[6] { 1, precursorMZ, precursorScan.RetentionTime, precursorIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
 
 
                     double monoisotopicMZ;
                     a.TryGetSelectedIonGuessMonoisotopicMZ(out monoisotopicMZ);
                     double monoisotopicIntensity;
                     a.TryGetSelectedIonGuessMonoisotopicIntensity(out monoisotopicIntensity);
-                    double newMonoisotopicMZ = monoisotopicMZ - bestCf.Predict(new double[5] { 1, monoisotopicMZ, precursorScan.RetentionTime, monoisotopicIntensity / precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
+                    double newMonoisotopicMZ = monoisotopicMZ - bestCf.Predict(new double[6] { 1, monoisotopicMZ, precursorScan.RetentionTime, monoisotopicIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
 
 
 
@@ -364,7 +339,7 @@ namespace mzCal
                     double IsolationMZ;
                     a.TryGetIsolationMZ(out IsolationMZ);
 
-                    Func<MzPeak, double> theFunc = x => x.MZ - bestCf.Predict(new double[8] { 2, x.MZ, a.RetentionTime, x.Intensity / a.TotalIonCurrent, a.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, (x.MZ - a.ScanWindowRange.Minimum) / (a.ScanWindowRange.Maximum - a.ScanWindowRange.Minimum) });
+                    Func<MzPeak, double> theFunc = x => x.MZ - bestCf.Predict(new double[9] { 2, x.MZ, a.RetentionTime, x.Intensity, a.TotalIonCurrent, a.InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, (x.MZ - a.ScanWindowRange.Minimum) / (a.ScanWindowRange.Maximum - a.ScanWindowRange.Minimum) });
                     a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFunc, newSelectedMZ, newMonoisotopicMZ);
 
                     if (p.MS2spectraToWatch.Contains(a.ScanNumber))
@@ -387,7 +362,7 @@ namespace mzCal
                         p.OnWatch(new OutputHandlerEventArgs(" before calibration:"));
                         p.OnWatch(new OutputHandlerEventArgs(" " + string.Join(",", a.MassSpectrum.newSpectrumExtract(p.mzRange).xArray)));
                     }
-                    Func<MzPeak, double> theFUnc = x => x.MZ - bestCf.Predict(new double[5] { 1, x.MZ, a.RetentionTime, x.Intensity / a.TotalIonCurrent, a.InjectionTime });
+                    Func<MzPeak, double> theFUnc = x => x.MZ - bestCf.Predict(new double[6] { 1, x.MZ, a.RetentionTime, x.Intensity, a.TotalIonCurrent, a.InjectionTime });
                     a.tranformByApplyingFunctionsToSpectraAndReplacingPrecursorMZs(theFUnc, double.NaN, double.NaN); if (p.MS1spectraToWatch.Contains(a.ScanNumber))
                     {
                         p.OnWatch(new OutputHandlerEventArgs(" after calibration:"));
@@ -406,10 +381,10 @@ namespace mzCal
 
             using (StreamWriter file = new StreamWriter(fullFileName))
             {
-                if (trainingPoints.First().inputs.Count() == 8)
-                    file.WriteLine("MS, MZ, RetentionTime, Intensity/TotalIonCurrent, InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ, label");
+                if (trainingPoints.First().inputs.Count() == 9)
+                    file.WriteLine("MS, MZ, RetentionTime, Intensity,TotalIonCurrent, InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ, label");
                 else
-                    file.WriteLine("MS, MZ, RetentionTime, Intensity/TotalIonCurrent, InjectionTime, label");
+                    file.WriteLine("MS, MZ, RetentionTime, Intensity,TotalIonCurrent, InjectionTime, label");
                 foreach (LabeledDataPoint d in trainingPoints)
                     file.WriteLine(string.Join(",", d.inputs) + "," + d.output);
             }

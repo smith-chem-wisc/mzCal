@@ -19,7 +19,7 @@ namespace mzCal
             return 0;
         }
 
-        public void Train(List<TrainingPoint> trainingList)
+        public override void Train(IEnumerable<LabeledDataPoint> trainingList)
         {
             onOutput(new OutputHandlerEventArgs("Sucessfully trained IdentityCalibrationFunction"));
         }

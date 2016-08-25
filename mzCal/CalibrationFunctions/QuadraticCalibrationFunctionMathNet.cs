@@ -9,63 +9,49 @@ namespace mzCal
     {
         Func<double[], double> f;
         private Action<OutputHandlerEventArgs> onOutput;
-        private bool[] useFeature;
         private int numFeatures;
         private int numFeaturesExpanded;
-        private bool[] logVars;
+        private TransformFunction transform;
 
-        public QuadraticCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList2, bool[] varsBool, bool[] logVars)
+
+        public QuadraticCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, TransformFunction transform)
         {
             this.onOutput = onOutput;
-            this.logVars = logVars;
-            useFeature = varsBool;
-            numFeatures = useFeature.Where(b => b == true).Count();
+            this.transform = transform;
+            numFeatures = transform.numOutputs;
             numFeaturesExpanded = numFeatures + numFeatures * (numFeatures + 1) / 2;
-            Train(trainList2);
         }
 
         public override double Predict(double[] t)
         {
-            return f(IndexMap(t));
+            return f(ExpandFeatures(transform.Transform(t)));
         }
 
 
-        private double[] IndexMap(double[] input)
+        private double[] ExpandFeatures(double[] input)
         {
-            double[] output = new double[numFeatures];
-            int featInd = 0;
-            for (int k = 0; k < useFeature.Length; k++)
-                if (useFeature[k])
-                {
-                    if (logVars[k])
-                        output[featInd] = Math.Log(input[k]);
-                    else
-                        output[featInd] = input[k];
-                    featInd++;
-                }
-
             double[] outputExpanded = new double[numFeaturesExpanded];
             for (int i = 0; i < numFeatures; i++)
-                outputExpanded[i] = output[i];
+                outputExpanded[i] = input[i];
             int index = numFeatures;
             for (int i = 0; i < numFeatures; i++)
             {
                 for (int j = i; j < numFeatures; j++)
                 {
-                    outputExpanded[index] = output[i] * output[j];
+                    outputExpanded[index] = input[i] * input[j];
                     index++;
                 }
             }
             return outputExpanded;
         }
 
-        public void Train(IEnumerable<LabeledDataPoint> trainingList)
+        public override void Train(IEnumerable<LabeledDataPoint> trainingList)
         {
             double[][] ok = new double[trainingList.Count()][];
             int k = 0;
             foreach (LabeledDataPoint p in trainingList)
             {
-                ok[k] = IndexMap(p.inputs);
+                ok[k] = ExpandFeatures(transform.Transform(p.inputs));
                 k++;
             }
             var ok2 = trainingList.Select(b => b.output).ToArray();
