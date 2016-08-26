@@ -87,7 +87,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ByHandCalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\ByHandCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\ConstantCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\DataPoint.cs" />
