@@ -32,7 +32,7 @@ namespace mzCal
                 var pointList1 = pointList.Where((b) => b.inputs[0] == 1).ToList();
                 if (pointList1.Count == 0)
                 {
-                    p.OnOutput(new OutputHandlerEventArgs("Not enough training points, identification quality is poor"));
+                    p.OnOutput(new OutputHandlerEventArgs("Not enough MS1 training points, identification quality is poor"));
                     return;
                 }
                 WriteDataToFiles(pointList1, "pointList1" + p.myMsDataFile.Name + preCalibraionRound);
@@ -40,7 +40,7 @@ namespace mzCal
                 var pointList2 = pointList.Where((b) => b.inputs[0] == 2).ToList();
                 if (pointList2.Count == 0)
                 {
-                    p.OnOutput(new OutputHandlerEventArgs("Not enough training points, identification quality is poor"));
+                    p.OnOutput(new OutputHandlerEventArgs("Not enough MS2 training points, identification quality is poor"));
                     return;
                 }
                 WriteDataToFiles(pointList2, "pointList2" + p.myMsDataFile.Name + preCalibraionRound);
@@ -55,7 +55,7 @@ namespace mzCal
                 ms2regressor.Train(pointList2);
                 CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
 
-                TrainingPointsExtractor.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
+                p.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
                 p.toleranceInMZforMS2Search -= Math.Abs(ms2regressor.a);
 
                 p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
@@ -198,7 +198,7 @@ namespace mzCal
             transforms.Add(new TransformFunction(b => new double[3] { b[2], Math.Log(b[4]), Math.Log(b[5]) }, 3, "FTFTT"));
             transforms.Add(new TransformFunction(b => new double[3] { Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 3, "FFTTT"));
 
-            transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[3]), Math.Log(b[4]) }, 4,"TTTTF"));
+            transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[3]), Math.Log(b[4]) }, 4, "TTTTF"));
             transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[3]), Math.Log(b[5]) }, 4, "TTTFT"));
             transforms.Add(new TransformFunction(b => new double[4] { b[1], b[2], Math.Log(b[4]), Math.Log(b[5]) }, 4, "TTFTT"));
             transforms.Add(new TransformFunction(b => new double[4] { b[1], Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 4, "TFTTT"));

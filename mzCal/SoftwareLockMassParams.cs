@@ -40,6 +40,7 @@ namespace mzCal
         public int minMS2 = 2;
         public int minMS1 = 3;
         public double toleranceInMZforMS2Search;
+        internal double toleranceInMZforMS1Search = 0.01;
 
         #region Constructors
 

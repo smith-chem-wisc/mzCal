@@ -11,9 +11,7 @@ namespace mzCal
 {
     class TrainingPointsExtractor
     {
-        public static double toleranceInMZforMS1Search = 0.01;
-
-        private static int numFragmentsNeeded = 10;
+        private const int numFragmentsNeeded = 10;
 
         public static List<LabeledDataPoint> GetDataPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
         {
@@ -366,7 +364,7 @@ namespace mzCal
                     {
                         double theMZ = a.ToMassToChargeRatio(chargeToLookAt);
 
-                        var npwr = fullMS1spectrum.NumPeaksWithinRange(theMZ - toleranceInMZforMS1Search, theMZ + toleranceInMZforMS1Search);
+                        var npwr = fullMS1spectrum.NumPeaksWithinRange(theMZ - p.toleranceInMZforMS1Search, theMZ + p.toleranceInMZforMS1Search);
                         if (npwr == 0)
                         {
                             if (p.MS1spectraToWatch.Contains(theIndex))
