@@ -20,7 +20,11 @@ namespace mzCalGUI
             mzCalIO.mzCalIO.Load();
             dataGridView1.DataSource = myListOfEntries;
             dataGridView1.Columns[3].Visible = false;
-            this.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (version.Equals("1.0.0.0"))
+                this.Text = "Not a release version";
+            else
+                this.Text = version;
         }
 
         private void buttonAddFiles_Click(object sender, EventArgs e)
@@ -39,13 +43,17 @@ namespace mzCalGUI
 
         private void buttonCalibrate_Click(object sender, EventArgs e)
         {
+            var t = new Thread(() => runMultiple(myListOfEntries, P_outputHandler, P_progressHandler, P_watchHandler));
+            t.IsBackground = true;
+            t.Start();
+        }
+
+        private static void runMultiple(BindingList<AnEntry> myListOfEntries, EventHandler<OutputHandlerEventArgs> oh, EventHandler<ProgressHandlerEventArgs> ph, EventHandler<OutputHandlerEventArgs> wh)
+        {
             foreach (var anEntry in myListOfEntries)
             {
-                SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, deconvoluteCheckBox.Checked);
-
-                var t = new Thread(() => SoftwareLockMassRunner.Run(a));
-                t.IsBackground = true;
-                t.Start();
+                SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(anEntry.spectraFile, oh, ph, wh, anEntry.mzidFile);
+                SoftwareLockMassRunner.Run(a);
             }
         }
 

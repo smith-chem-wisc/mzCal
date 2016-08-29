@@ -28,22 +28,32 @@ namespace mzCalIO
             return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
         }
 
-        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, bool deconvolute)
+        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile)
         {
             IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
+            bool deconvolute = true;
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
+            {
                 myMsDataFile = new Mzml(origDataFile);
+                myMsDataFile.Open();
+            }
             else
+            {
                 myMsDataFile = new ThermoRawFile(origDataFile);
+                myMsDataFile.Open();
+                if (((ThermoRawFile)myMsDataFile).monoisotopicPrecursorSelectionEnabled)
+                    deconvolute = false;
+            }
             int randomSeed = 1;
-            var a = new SoftwareLockMassParams(myMsDataFile, randomSeed, deconvolute);
+            var identifications = new MzidIdentifications(mzidFile);
+            var a = new SoftwareLockMassParams(myMsDataFile, randomSeed, deconvolute, identifications.fragmentTolerance.Value * 2);
             a.outputHandler += p_outputHandler;
             a.progressHandler += p_progressHandler;
             a.watchHandler += p_watchHandler;
             a.postProcessing = MzmlOutput;
             a.getFormulaFromDictionary = getFormulaFromDictionary;
-            a.identifications = new MzidIdentifications(mzidFile);
-
+            a.identifications = identifications;
+            a.mzRange = new DoubleRange(0, 0);
             return a;
         }
 
@@ -92,7 +102,7 @@ namespace mzCalIO
         public static void MzmlOutput(SoftwareLockMassParams p)
         {
             p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
-            var path = Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated.mzML");
+            var path = Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + p.paramString + "-Calibrated.mzML");
             MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, path);
         }
 

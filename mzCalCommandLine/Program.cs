@@ -8,19 +8,22 @@ namespace mzCalCommandLine
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Version " + Assembly.GetExecutingAssembly().GetName().Version);
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (version.Equals("1.0.0.0"))
+                Console.WriteLine("Not a release version");
+            else
+                Console.WriteLine(version);
 
             string origDataFile = args[0];
             string mzidFile = args[1];
-            bool deconvolute = false;
-            if (args.Length > 2)
-                deconvolute = args[2].Equals("deconvolute");
 
             mzCalIO.mzCalIO.Load();
 
-            SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, deconvolute);
+            SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile);
 
             SoftwareLockMassRunner.Run(a);
+
+
             //Console.Read();
         }
 

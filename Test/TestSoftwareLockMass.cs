@@ -19,16 +19,6 @@ namespace Test
 
         }
 
-        [Test]
-        public void TestSoftwareLockMassRunner()
-        {
-            mzCalIO.mzCalIO.Load();
-
-            SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(@"myFakeFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid", true);
-
-            SoftwareLockMassRunner.Run(a);
-        }
-
         event EventHandler<OutputHandlerEventArgs> outputHandler;
 
         public void OnOutput(OutputHandlerEventArgs e)
@@ -47,8 +37,6 @@ namespace Test
             Console.Write(e.progress + "% ");
         }
 
-
-
         [Test]
         public void TestConstantCalibration()
         {
@@ -59,7 +47,8 @@ namespace Test
             trainingList.Add(new LabeledDataPoint(new double[3] { 2, 2, 1 }, 0.5));
             IdentityCalibrationFunction cf = new IdentityCalibrationFunction(OnOutput);
             Assert.AreEqual(4 * Math.Pow(0.5, 2) / 4, cf.getMSE(trainingList));
-            ConstantCalibrationFunction cfconst = new ConstantCalibrationFunction(OnOutput, trainingList);
+            ConstantCalibrationFunction cfconst = new ConstantCalibrationFunction(OnOutput);
+            cfconst.Train(trainingList);
             Assert.AreEqual(0, cfconst.getMSE(trainingList));
         }
     }

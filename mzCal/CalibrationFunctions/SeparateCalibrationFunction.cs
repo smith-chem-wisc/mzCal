@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace mzCal
 {
@@ -19,6 +20,11 @@ namespace mzCal
                 return calibrationFunction1.Predict(inputs);
             else
                 return calibrationFunction2.Predict(inputs);
+        }
+
+        public override void Train(IEnumerable<LabeledDataPoint> trainingList)
+        {
+            throw new NotImplementedException();
         }
     }
 }
