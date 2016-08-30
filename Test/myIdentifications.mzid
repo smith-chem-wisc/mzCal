@@ -28,4 +28,16 @@
       </SpectrumIdentificationList>
     </AnalysisData>
   </DataCollection>
+  <AnalysisProtocolCollection>
+    <SpectrumIdentificationProtocol>
+      <FragmentTolerance>
+        <cvParam accession="MS:1001412" name="search tolerance plus value" value="0.1" cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
+        <cvParam accession="MS:1001413" name="search tolerance minus value" value="0.1" cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
+      </FragmentTolerance>
+      <ParentTolerance>
+        <cvParam accession="MS:1001412" name="search tolerance plus value" value="10" cvRef="PSI-MS" unitAccession="UO:0000169" unitName="parts per million" unitCvRef="UO" />
+        <cvParam accession="MS:1001413" name="search tolerance minus value" value="10" cvRef="PSI-MS" unitAccession="UO:0000169" unitName="parts per million" unitCvRef="UO" />
+      </ParentTolerance>
+    </SpectrumIdentificationProtocol>
+  </AnalysisProtocolCollection>
 </MzIdentML>
