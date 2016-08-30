@@ -110,6 +110,8 @@ namespace mzCalGUI
                 AnEntry aa = null;
                 foreach (AnEntry a in myListOfEntries)
                 {
+                    if (a.Filename == null)
+                        continue;
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzML"))
                     {
                         if (a.Filename.Equals(pathNoExtension))
