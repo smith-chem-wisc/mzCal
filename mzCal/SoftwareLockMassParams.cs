@@ -35,12 +35,12 @@ namespace mzCal
         public GetFormulaFromDictionary getFormulaFromDictionary;
         public bool calibrateSpectra = true;
         internal int randomSeed;
-        internal bool deconvolute;
         public string paramString = "";
         public int minMS2 = 2;
         public int minMS1 = 3;
         public double toleranceInMZforMS2Search;
         internal double toleranceInMZforMS1Search = 0.01;
+        public HashSet<int> matchesToExclude;
 
         #region Constructors
 
@@ -50,7 +50,6 @@ namespace mzCal
             MS1spectraToWatch = new HashSet<int>();
             MS2spectraToWatch = new HashSet<int>();
             this.randomSeed = randomSeed;
-            this.deconvolute = deconvolute;
             this.toleranceInMZforMS2Search = toleranceInMZforMS2Search;
 
         }

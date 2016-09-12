@@ -13,18 +13,17 @@ namespace mzCal
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
 
-            p.OnOutput(new OutputHandlerEventArgs("Pre-calibration:"));
-
             List<int> trainingPointCounts = new List<int>();
             List<LabeledDataPoint> pointList;
-            for (int preCalibraionRound = 0; ; preCalibraionRound++)
+            for (int calibrationRound = 1; ; calibrationRound++)
             {
-                p.OnOutput(new OutputHandlerEventArgs("Pre-Calibration round " + preCalibraionRound));
+                p.OnOutput(new OutputHandlerEventArgs("Calibration round " + calibrationRound));
+
                 p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
 
-                pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p);
+                pointList = TrainingPointsExtractor.GetDataPoints(p.myMsDataFile, p.identifications, p, p.matchesToExclude);
 
-                if (preCalibraionRound >= 1 && pointList.Count <= trainingPointCounts[preCalibraionRound - 1])
+                if (calibrationRound >= 2 && pointList.Count <= trainingPointCounts[calibrationRound - 2])
                     break;
 
                 trainingPointCounts.Add(pointList.Count);
@@ -35,7 +34,7 @@ namespace mzCal
                     p.OnOutput(new OutputHandlerEventArgs("Not enough MS1 training points, identification quality is poor"));
                     return;
                 }
-                WriteDataToFiles(pointList1, "pointList1" + p.myMsDataFile.Name + preCalibraionRound);
+                WriteDataToFiles(pointList1, "pointList1" + p.myMsDataFile.Name + calibrationRound);
                 p.OnOutput(new OutputHandlerEventArgs("pointList1.Count() = " + pointList1.Count()));
                 var pointList2 = pointList.Where((b) => b.inputs[0] == 2).ToList();
                 if (pointList2.Count == 0)
@@ -43,48 +42,20 @@ namespace mzCal
                     p.OnOutput(new OutputHandlerEventArgs("Not enough MS2 training points, identification quality is poor"));
                     return;
                 }
-                WriteDataToFiles(pointList2, "pointList2" + p.myMsDataFile.Name + preCalibraionRound);
+                WriteDataToFiles(pointList2, "pointList2" + p.myMsDataFile.Name + calibrationRound);
                 p.OnOutput(new OutputHandlerEventArgs("pointList2.Count() = " + pointList2.Count()));
 
                 CalibrationFunction identityPredictor = new IdentityCalibrationFunction(p.OnOutput);
                 p.OnOutput(new OutputHandlerEventArgs("Uncalibrated MSE, " + identityPredictor.getMSE(pointList1) + "," + identityPredictor.getMSE(pointList2) + "," + identityPredictor.getMSE(pointList)));
 
-                ConstantCalibrationFunction ms1regressor = new ConstantCalibrationFunction(p.OnOutput);
-                ConstantCalibrationFunction ms2regressor = new ConstantCalibrationFunction(p.OnOutput);
-                ms1regressor.Train(pointList1);
-                ms2regressor.Train(pointList2);
-                CalibrationFunction combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+                CalibrationFunction combinedCalibration = Calibrate(pointList, p);
 
-                p.toleranceInMZforMS1Search -= Math.Abs(ms1regressor.a);
-                p.toleranceInMZforMS2Search -= Math.Abs(ms2regressor.a);
-
-                p.OnOutput(new OutputHandlerEventArgs("Pre-Calibrating Spectra"));
-
-                CalibrateSpectra(p, combinedCalibration);
-
-                combinedCalibration.writePredictedLables(pointList1, "pointList1preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
-                combinedCalibration.writePredictedLables(pointList2, "pointList2preCalibration" + p.myMsDataFile.Name + preCalibraionRound);
-                p.OnOutput(new OutputHandlerEventArgs("After constant shift MSE, " + ms1regressor.getMSE(pointList1) + "," + ms2regressor.getMSE(pointList2)));
+                combinedCalibration.writePredictedLables(pointList1, "pointList1predictedLabels" + p.myMsDataFile.Name + "CalibrationRound" + calibrationRound);
+                combinedCalibration.writePredictedLables(pointList2, "pointList2predictedLabels" + p.myMsDataFile.Name + "CalibrationRound" + calibrationRound);
 
             }
 
-            p.OnOutput(new OutputHandlerEventArgs("Actual Calibration"));
-
-            Calibrate(pointList, p);
-
-            if (p.deconvolute)
-            {
-                p.OnOutput(new OutputHandlerEventArgs("Deconvolution"));
-                foreach (var ok in p.myMsDataFile)
-                {
-                    if (ok.MsnOrder == 2)
-                    {
-                        int precursorScanNumber;
-                        ok.TryGetPrecursorScanNumber(out precursorScanNumber);
-                        ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
-                    }
-                }
-            }
+            p.OnOutput(new OutputHandlerEventArgs("Post-processing"));
 
             p.postProcessing(p);
 
@@ -144,8 +115,7 @@ namespace mzCal
                 bestMS2MSE = MS2mse;
                 bestMS2predictor = ms2regressor;
             }
-
-
+            
             //ms1regressor = new ByHandCalibrationFunction(p.OnOutput, trainList1);
             //ms2regressor = new ByHandCalibrationFunction(p.OnOutput, trainList2);
             //combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
@@ -205,9 +175,7 @@ namespace mzCal
             transforms.Add(new TransformFunction(b => new double[4] { b[2], Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 4, "FTTTT"));
 
             transforms.Add(new TransformFunction(b => new double[5] { b[1], b[2], Math.Log(b[3]), Math.Log(b[4]), Math.Log(b[5]) }, 5, "TTTTT"));
-
-
-
+            
             try
             {
                 foreach (var transform in transforms)
@@ -231,7 +199,7 @@ namespace mzCal
                         bestMS2MSE = MS2mse;
                         bestMS2predictor = ms2regressor;
                         ms2regressor.writePredictedLables(trainList2, "train2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
-                        ms2regressor.writePredictedLables(testList2, "teset2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
+                        ms2regressor.writePredictedLables(testList2, "test2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
                     }
                 }
                 foreach (var transform in transforms)
@@ -255,36 +223,9 @@ namespace mzCal
                         bestMS2MSE = MS2mse;
                         bestMS2predictor = ms2regressor;
                         ms2regressor.writePredictedLables(trainList2, "train2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
-                        ms2regressor.writePredictedLables(testList2, "teset2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
+                        ms2regressor.writePredictedLables(testList2, "test2" + ms2regressor.name + transform.name + p.myMsDataFile.Name);
                     }
                 }
-                //foreach (var logVars in logArray)
-                //{
-                //    foreach (var ok in featuresArray)
-                //    {
-                //        ms1regressor = new CubicCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                //        ms2regressor = new CubicCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                //        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                //        combinedCalibration.writeNewLabels(trainList1, "trainList1Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //        combinedCalibration.writeNewLabels(trainList2, "trainList2Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //        combinedCalibration.writeNewLabels(testList1, "testList1Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //        combinedCalibration.writeNewLabels(testList2, "testList2Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                //        MS1mse = ms1regressor.getMSE(testList1);
-                //        MS2mse = ms2regressor.getMSE(testList2);
-                //        combinedMSE = combinedCalibration.getMSE(testList);
-                //        p.OnOutput(new OutputHandlerEventArgs("Cubic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                //        if (MS1mse < bestMS1MSE)
-                //        {
-                //            bestMS1MSE = MS1mse;
-                //            bestMS1predictor = ms1regressor;
-                //        }
-                //        if (MS2mse < bestMS2MSE)
-                //        {
-                //            bestMS2MSE = MS2mse;
-                //            bestMS2predictor = ms2regressor;
-                //        }
-                //    }
-                //}
             }
             catch (ArgumentException e)
             {

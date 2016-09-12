@@ -13,7 +13,7 @@ namespace mzCal
     {
         private const int numFragmentsNeeded = 10;
 
-        public static List<LabeledDataPoint> GetDataPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
+        public static List<LabeledDataPoint> GetDataPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p, HashSet<int> matchesToExclude)
         {
             p.OnOutput(new OutputHandlerEventArgs("Extracting data points:"));
             // The final training point list
@@ -23,15 +23,22 @@ namespace mzCal
             HashSet<Tuple<double, double>> peaksAddedFromMS1HashSet = new HashSet<Tuple<double, double>>();
 
             int numIdentifications = identifications.Count;
-            // Loop over all identifications
+            // Loop over identifications
             for (int matchIndex = 0; matchIndex < numIdentifications; matchIndex++)
             {
+                if (!identifications.passThreshold(matchIndex))
+                    break;
+
                 // Progress
                 if (numIdentifications < 100 || matchIndex % (numIdentifications / 100) == 0)
                     p.OnProgress(new ProgressHandlerEventArgs(100 * matchIndex / numIdentifications));
 
                 // Skip decoys, they are for sure not there!
                 if (identifications.isDecoy(matchIndex))
+                    continue;
+
+                // Skip exclusions! These are for testing
+                if (matchesToExclude.Contains(matchIndex))
                     continue;
 
                 // Each identification has an MS2 spectrum attached to it. 
@@ -87,7 +94,6 @@ namespace mzCal
                     Console.WriteLine(" intensities = " + string.Join(", ", intensities) + "...");
                 }
 
-
                 int lowestMS1ind = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedFromMS1HashSet, p, peptideCharge);
 
                 int highestMS1ind = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedFromMS1HashSet, p, peptideCharge);
@@ -97,7 +103,6 @@ namespace mzCal
                     p.OnWatch(new OutputHandlerEventArgs(" ms1range: " + lowestMS1ind + " to " + highestMS1ind));
                 }
                 trainingPointsToReturn.AddRange(candidateTrainingPointsForPeptide);
-
             }
             p.OnOutput(new OutputHandlerEventArgs(""));
             p.OnOutput(new OutputHandlerEventArgs("Number of training points: " + trainingPointsToReturn.Count()));
