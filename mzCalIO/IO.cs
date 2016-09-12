@@ -54,6 +54,7 @@ namespace mzCalIO
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = identifications;
             a.mzRange = new DoubleRange(0, 0);
+            a.matchesToExclude = new HashSet<int>();
             return a;
         }
 
